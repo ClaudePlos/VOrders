@@ -1,0 +1,463 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package pl.vendi.ui.documents.elements;
+
+import com.vaadin.data.Container;
+import com.vaadin.data.Property;
+import com.vaadin.data.util.BeanContainer;
+import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.event.ItemClickEvent;
+import com.vaadin.server.FontAwesome;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.Field;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Table;
+import com.vaadin.ui.TableFieldFactory;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.themes.ValoTheme;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import pl.vendi.ui.VOLookup;
+import pl.vendi.ui.common.ComboBoxProducts;
+import pl.vo.VOConsts;
+import pl.vo.documents.model.Document;
+import pl.vo.documents.model.DocumentItem;
+import pl.vo.products.model.Product;
+import pl.vo.utils.VOUtils;
+
+/**
+ *
+ * @author Piotr
+ */
+public class DocumentItemsTable extends Table {
+
+    BeanItemContainer<DocumentItem> cnt = new BeanItemContainer< DocumentItem>(DocumentItem.class);
+
+    BeanItemContainer<Product> cntProducts = new BeanItemContainer<Product>(Product.class);
+
+    private Table thisTable;
+
+    private String documentTypeGroup;
+
+    List<String> columns = new ArrayList<String>();
+    List<String> columnCaptions = new ArrayList<String>();
+    
+    final DocumentWindow parentWindow; 
+    DocumentItemsWithFilter parent; 
+
+    public DocumentItemsTable(String documentTypeGroup, DocumentWindow parentWindow , DocumentItemsWithFilter parent)
+    {
+        this.parentWindow = parentWindow;
+        this.parent = parent; 
+        thisTable = this;
+        this.documentTypeGroup = documentTypeGroup;
+        List<Product> products = VOLookup.lookupProductsApi().findAll();
+        cntProducts.addAll(products);
+
+        this.setContainerDataSource(cnt);
+
+        this.setSelectable(true);
+        //this.setEditable( true );
+
+        cnt.addNestedContainerProperty("product.abbr");
+        cnt.addNestedContainerProperty("product.measureUnit");
+        cnt.addNestedContainerProperty("product.measureUnit.abbr");
+
+        cnt.addNestedContainerProperty("unitProductSupplier.supplier");
+        cnt.addNestedContainerProperty("unitProductSupplier.supplier.abbr");
+
+        this.addItemClickListener(new ItemClickEvent.ItemClickListener() {
+
+            @Override
+            public void itemClick(ItemClickEvent event) {
+                // Notification.show("AA");   
+                thisTable.setValue(event.getItemId());
+                // thisTable.setSelectable(!true);
+                // thisTable.setEditable( true );
+                //thisTable.
+            }
+        });
+
+          this.addGeneratedColumn("unitPriceNetEdit", new ColumnGenerator() {
+
+                @Override
+                public Object generateCell(Table source, Object itemId, Object columnId) {
+
+                    if (itemId != null) {
+                        TextField lab = new TextField();
+                        DocumentItem di = (DocumentItem) itemId;
+                        if (di != null && di.getUnitPriceNet() != null) {
+                            lab.setValue(di.getUnitPriceNet().toString());
+                        } else {
+                            lab.setValue("");
+                        }
+                        lab.addValueChangeListener( new Property.ValueChangeListener() {
+
+                            @Override
+                            public void valueChange(Property.ValueChangeEvent event) {
+                                String sval = (String) event.getProperty().getValue();
+                                DocumentItem di = (DocumentItem) itemId;
+                                di.setUnitPriceNet(new BigDecimal(sval));
+                               setModified();
+                            }
+                        });
+
+                        return lab;
+                    }
+                    return null;
+                }
+            });
+
+      
+            // non editable
+            this.addGeneratedColumn("unitPriceNet", new ColumnGenerator() {
+
+                @Override
+                public Object generateCell(Table source, Object itemId, Object columnId) {
+
+                    if (itemId != null) {
+                        Label lab = new Label();
+                        DocumentItem di = (DocumentItem) itemId;
+                        if (di != null && di.getUnitPriceNet() != null) {
+                            lab.setValue(di.getUnitPriceNet().toString());
+                        } else {
+                            lab.setValue("");
+                        }
+                        
+                        lab.addValueChangeListener( new Property.ValueChangeListener() {
+
+                            @Override
+                            public void valueChange(Property.ValueChangeEvent event) {
+                               setModified();
+                            }
+                        });
+
+                        return lab;
+                    }
+                    return null;
+                }
+            });
+        
+
+        this.addGeneratedColumn("product", new ColumnGenerator() {
+
+            @Override
+            public Object generateCell(Table source, final Object itemId, Object columnId) {
+
+                if (itemId != null) {
+                    DocumentItem di = (DocumentItem) itemId;
+                   
+                    Label lab = new Label();
+
+                    if (di != null && di.getProduct() != null) {
+                        lab.setValue(di.getProduct().getName());
+                        return lab;
+                    }
+                }
+                return null;
+            }
+        });
+
+        this.addGeneratedColumn("delete", new ColumnGenerator() {
+
+            @Override
+            public Object generateCell(Table source, final Object itemId, Object columnId) {
+
+                Button but = new Button();
+                but.setCaptionAsHtml(true);
+                but.setCaption(FontAwesome.TRASH_O.getHtml());
+                but.addStyleName(ValoTheme.BUTTON_LINK);
+
+                but.addClickListener(new Button.ClickListener() {
+
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        parent.removeItem((DocumentItem) itemId);
+                    }
+                });
+
+                return but;
+
+            }
+        });
+
+        // if (document != null && document.getType().equals(VOConsts.DOC_TYPE_ZWD) && document.getStatus().equals(VOConsts.DOC_STATUS_RECEIVED_BY_SUPPLIER)) {
+        this.addGeneratedColumn("amountConfirmedEdit", new ColumnGenerator() {
+
+            @Override
+            public Object generateCell(Table source, final Object itemId, Object columnId) {
+
+                TextField lab = new TextField();
+                DocumentItem di = (DocumentItem) itemId;
+                if (di != null && di.getAmountConfirmed() != null) {
+                    lab.setValue(di.getAmountConfirmed().toString());
+                } else {
+                    lab.setValue("");
+                }
+
+                lab.addValueChangeListener(new Property.ValueChangeListener() {
+
+                    @Override
+                    public void valueChange(Property.ValueChangeEvent event) {
+                        String sval = (String) event.getProperty().getValue();
+                        DocumentItem di = (DocumentItem) itemId;
+                        di.setAmountConfirmed(new BigDecimal(sval));
+                        setModified();
+                    }
+                });
+
+                return lab;
+
+            }
+        });
+
+        this.addGeneratedColumn("amountEdit", new ColumnGenerator() {
+
+            @Override
+            public Object generateCell(Table source, final Object itemId, Object columnId) {
+
+                TextField lab = new TextField();
+                DocumentItem di = (DocumentItem) itemId;
+                if (di != null && di.getAmount() != null) {
+                    lab.setValue(di.getAmount().toString());
+                } else {
+                    lab.setValue("");
+                }
+
+                lab.addValueChangeListener(new Property.ValueChangeListener() {
+
+                    @Override
+                    public void valueChange(Property.ValueChangeEvent event) {
+                        String sval = (String) event.getProperty().getValue();
+                        DocumentItem di = (DocumentItem) itemId;
+                        di.setAmount(new BigDecimal(sval));
+                        setModified();
+                    }
+                });
+
+                return lab;
+
+            }
+        });
+        
+        
+        this.addGeneratedColumn("valueNet", new ColumnGenerator() {
+
+            @Override
+            public Object generateCell(Table source, final Object itemId, Object columnId) {
+
+                Label lab = new Label();
+                        DocumentItem di = (DocumentItem) itemId;
+                        if (di != null && di.getValueNet()!= null) {
+                            lab.setValue(VOUtils.formatCurrency(di.getValueNet()));
+                            lab.setWidth("100%");
+                            lab.addStyleName( "labelRight");
+                            
+                        } else {
+                            lab.setValue("");
+                        }
+                return lab;
+
+            }
+        });
+        
+         
+        this.addGeneratedColumn("valueTax", new ColumnGenerator() {
+
+            @Override
+            public Object generateCell(Table source, final Object itemId, Object columnId) {
+
+                Label lab = new Label();
+                        DocumentItem di = (DocumentItem) itemId;
+                        if (di != null && di.getValueTax()!= null) {
+                            lab.setValue(VOUtils.formatCurrency(di.getValueTax()));
+                            lab.setWidth("100%");
+                            lab.addStyleName( "labelRight");
+                            
+                        } else {
+                            lab.setValue("");
+                        }
+                return lab;
+
+            }
+        });
+        
+         
+        this.addGeneratedColumn("valueBrut", new ColumnGenerator() {
+
+            @Override
+            public Object generateCell(Table source, final Object itemId, Object columnId) {
+
+                Label lab = new Label();
+                        DocumentItem di = (DocumentItem) itemId;
+                        if (di != null && di.getValueBrut()!= null) {
+                            lab.setValue(VOUtils.formatCurrency(di.getValueBrut()));
+                            lab.setWidth("100%");
+                            lab.addStyleName( "labelRight");
+                            
+                        } else {
+                            lab.setValue("");
+                        }
+                return lab;
+
+            }
+        });
+        // }
+
+        setColumnSet();
+
+        setFieldsFactory();
+
+    }
+
+   
+    private Document document;
+
+    public void setDocument(Document document) {
+
+        this.document = document;
+      refreshRows();
+        // set column
+        setColumnSet();
+
+    }
+    
+    public void setContainer(BeanItemContainer<DocumentItem> cnt){
+        this.cnt = cnt; 
+         this.setContainerDataSource(cnt);
+        setColumnSet();
+        
+    }
+    
+    public void refreshRows( ) { 
+          if (document != null) {
+            cnt.removeAllItems();
+
+            if (this.isEditable()) {
+                //  document.getItems().add( new DocumentItem( ));
+            }
+            cnt.addAll(document.getItems());
+        }
+    }
+
+    private void setColumnSet() {
+        columns.clear();;
+        columnCaptions.clear();
+
+        addColumn("product", "Towar");
+         addColumn("product.measureUnit.abbr", "Jm");
+
+       
+        if (documentTypeGroup.equals(VOConsts.DOC_TYPE_PRICE_LIST)
+               
+                || documentTypeGroup.equals(VOConsts.DOC_TYPE_ZWD)) 
+        {
+            if ( document != null && document.getStatus().equals( VOConsts.DOC_STATUS_OPEN))
+                 addColumn("unitPriceNetEdit", "Cena Edycja");
+                else
+            addColumn("unitPriceNet", "Cena");
+        }
+        
+        if (   documentTypeGroup.equals(VOConsts.DOC_TYPE_ZWK) && document != null && !document.getStatus().equals( VOConsts.DOC_STATUS_OPEN))
+        {
+           addColumn("unitPriceNet", "Cena"); 
+        }
+       // }
+
+        // for orders
+        if (documentTypeGroup.equals(VOConsts.DOC_TYPE_ZWK)) { 
+            if ( document != null && document.getStatus().equals( VOConsts.DOC_STATUS_OPEN))
+            {
+                addColumn("amountEdit", "Ilość zamawiana"); 
+            }
+            else
+                 addColumn("amount", "Ilość zamawiana");
+        }
+       
+                if ( documentTypeGroup.equals(VOConsts.DOC_TYPE_ZWD)) {
+
+            addColumn("amount", "Ilość");
+        }
+
+        if (documentTypeGroup.equals(VOConsts.DOC_TYPE_PZ) && document != null) {
+            if (document.getStatus().equals(VOConsts.DOC_STATUS_OPEN)) {
+                addColumn("amountEdit", "Ilość dostarczona");
+            } else {
+                addColumn("amount", "Ilość dostarczona");
+            }
+        }
+        // 
+        if (document != null && document.getType().equals(VOConsts.DOC_TYPE_ZWD)) {
+            if (document.getStatus().equals(VOConsts.DOC_STATUS_RECEIVED_BY_SUPPLIER)) {
+                addColumn("amountConfirmedEdit", "Ilość potwierdzona");
+            } else {
+                addColumn("amountConfirmed", "Ilość potwierdzona");
+            }
+        }
+        if (document != null && document.getType().equals(VOConsts.DOC_TYPE_DPZ)) {
+
+            addColumn("amountConfirmed", "Ilość potwierdzona");
+            addColumn("amountOnDpzs", "Ilość z innych PZ");
+            addColumn("amountLeftToDelivery", "Pozostało");
+            addColumn("amountEdit", "Zadeklaruj wysyłkę na PZ");
+        }
+
+        if (document != null && !document.getStatus().equals(VOConsts.DOC_STATUS_OPEN) &&
+                !documentTypeGroup.equals(VOConsts.DOC_TYPE_PRICE_LIST)) 
+        {
+            addColumn("valueNet", "Netto");
+            addColumn("valueTax", "Vat");
+            addColumn("valueBrut", "Brutto");
+            addColumn("unitProductSupplier.supplier.abbr", "Dostawca");
+        }
+
+        if (document != null && !document.getStatus().equals(VOConsts.DOC_STATUS_OPEN)) {
+            addColumn("status", "Status");
+        }
+
+        if (document != null && document.getStatus().equals(VOConsts.DOC_STATUS_OPEN)) {
+            addColumn("delete", "Usuń");
+        }
+
+        this.setVisibleColumns(columns.toArray());
+        this.setColumnHeaders(columnCaptions.toArray(new String[0]));
+
+    }
+
+    private void addColumn(String columnName, String caption) {
+        columns.add(columnName);
+        columnCaptions.add(caption);
+    }
+
+    /* 
+     public void setEditable( boolean val )
+     {
+     this.editable = val; 
+        
+     }
+     */
+
+    private void setFieldsFactory() {
+        //  this.setTableFieldFactory( new DocumentsPositionFieldFactory(cntProducts, this));
+    }
+
+    public BeanItemContainer<DocumentItem> getCnt() {
+        return cnt;
+    }
+
+    public void setCnt(BeanItemContainer<DocumentItem> cnt) {
+        this.cnt = cnt;
+    }
+    
+    public void setModified()
+    {
+        parentWindow.setModified(true);
+    }
+
+}
