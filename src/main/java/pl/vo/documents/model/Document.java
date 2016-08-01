@@ -68,11 +68,11 @@ public class Document extends AuditEntityBase implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date dateIssue;
 
-    @Column(name = "date_send", columnDefinition = "date")
+    @Column(name = "date_send")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateSend;
 
-    @Column(name = "date_delivery", columnDefinition = "date")
+    @Column(name = "date_delivery")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateDelivery;
 

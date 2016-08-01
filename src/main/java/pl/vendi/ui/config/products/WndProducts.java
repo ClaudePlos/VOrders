@@ -10,14 +10,8 @@ import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.ItemClickEvent;
-import com.vaadin.ui.AbstractSelect;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
+import com.vaadin.ui.*;
+
 import java.util.List;
 import pl.vendi.ui.VOLookup;
 import pl.vendi.ui.VendiOrdersUI;
@@ -82,11 +76,16 @@ public class WndProducts extends Window {
         vboxMain.setSpacing(true);
         vboxMain.setMargin(true);
 
+
         vboxMain.addComponent(tbl);
-        vboxMain.addComponent(vboxEdit);
+
+        Panel panelEdit= new Panel();
+        panelEdit.setContent(vboxEdit);
+        panelEdit.setHeight("100%");
+        vboxMain.addComponent(panelEdit);
 
         vboxMain.setExpandRatio(tbl, 0.6f);
-        vboxMain.setExpandRatio(vboxEdit, 0.3f);
+        vboxMain.setExpandRatio(panelEdit, 0.3f);
         vboxEdit.setWidth("200px");
         // 
 

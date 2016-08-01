@@ -31,10 +31,7 @@ public class WndPriceLists extends Window
     DocumentsTable tabPriceLists = new DocumentsTable("Cenniki",   VOConsts.DOC_TYPE_PRICE_LIST);
     
     Button butAdd = new Button("Dodaj cennik");
-    
-    
-   
-    
+
     public WndPriceLists()
     {
         super("Cenniki");

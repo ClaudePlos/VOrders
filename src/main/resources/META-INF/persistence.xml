@@ -6,10 +6,11 @@
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <shared-cache-mode>NONE</shared-cache-mode>
     <properties>
-      <property name="javax.persistence.schema-generation.database.action" value="create"/>
+      <property name="javax.persistence.schema-generation.database.action" value="update"/>
       <property name="openjpa.LockManager" value="none"/>
       <property name="eclipselink.logging.level.sql" value="FINE"/>
       <property name="eclipselink.logging.parameters" value="true"/>
+      <property name="eclipselink.ddl-generation " value="create-or-extend-tables"></property>
     </properties>
   </persistence-unit>
 </persistence>

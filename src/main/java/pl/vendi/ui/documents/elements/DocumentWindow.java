@@ -8,17 +8,8 @@ package pl.vendi.ui.documents.elements;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.data.Property;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.UI;
+import com.vaadin.ui.*;
 
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 import java.util.HashSet;
 import java.util.List;
@@ -106,12 +97,25 @@ public class DocumentWindow extends Window implements Button.ClickListener, Prop
         documentsProcessApi = VOLookup.lookupDocumentsProcessApi();
         tblPositions = new DocumentItemsWithFilter(documentType, this);
 
-        this.setContent(vboxMain);
+        Panel panelContent= new Panel();
+        panelContent.setId("panelContent");
+        panelContent.setContent(vboxMain);
+        panelContent.setHeight("100%");
+        panelContent.setWidth("100%");
+        this.setContent(panelContent);
+        vboxMain.setId("vboxMain");
         vboxMain.setSizeFull();
         vboxMain.setMargin(true);
         vboxMain.setSpacing(true);
         vboxMain.addComponent(hboxSourceDocument);
-        vboxMain.addComponent(hboxTop);
+
+
+        //
+        Panel topPanel = new Panel();
+        topPanel.setContent(hboxTop);
+        topPanel.setWidth("100%");
+
+        vboxMain.addComponent(topPanel);
         vboxMain.addComponent(tblPositions);
         vboxMain.addComponent(hboxBottom);
 
@@ -138,6 +142,7 @@ public class DocumentWindow extends Window implements Button.ClickListener, Prop
         tfNumberExternal.addValueChangeListener(this);
         tfNumberOwn.addValueChangeListener(this);
         cmbSupplier.addValueChangeListener(this);
+        tfNumberExternal.setWidth("150px");
         cmbOrganisationUnit.addValueChangeListener( new Property.ValueChangeListener() {
 
             @Override
@@ -167,6 +172,7 @@ public class DocumentWindow extends Window implements Button.ClickListener, Prop
         }
 
         hboxTop.addComponent(dfDocDate);
+        dfDocDate.setWidth("150px");
         dfDocDate.setRequired(true);
         dfDocDate.setRequiredError("Wprowadź datę dokumentu");
 
@@ -178,6 +184,7 @@ public class DocumentWindow extends Window implements Button.ClickListener, Prop
             hboxTop.addComponent(cmbSupplier);
             cmbSupplier.setRequired(true);
             cmbSupplier.setRequiredError("Wybierz dostawcę");
+            cmbSupplier.setWidth("150px");
         }
 
         if (documentType.equals(VOConsts.DOC_TYPE_ZWK) || documentType.equals(VOConsts.DOC_TYPE_ZWD)
@@ -199,6 +206,9 @@ public class DocumentWindow extends Window implements Button.ClickListener, Prop
             hboxTop.addComponent(priceListDateTill);
             priceListDateTill.setRequired(true);
             priceListDateTill.setRequiredError("Wprowadź końcową datę obowiązywania cennika");
+
+            priceListDateFrom.setWidth("150px");
+            priceListDateTill.setWidth("150px");
         }
 
         // footer
