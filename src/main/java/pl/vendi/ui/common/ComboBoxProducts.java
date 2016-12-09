@@ -9,6 +9,7 @@ import com.vaadin.data.Container;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.ComboBox;
+import java.util.Locale;
 import pl.vendi.ui.VOLookup;
 import pl.vo.common.model.DictionaryValue;
 import pl.vo.products.model.Product;
@@ -24,7 +25,8 @@ public class ComboBoxProducts extends ComboBox {
         this.setCaption(caption);
         this.setContainerDataSource(container);
         this.setItemCaptionMode(AbstractSelect.ItemCaptionMode.PROPERTY);
-        this.setItemCaptionPropertyId("name");
+        this.setItemCaptionPropertyId("nameAndProvider");
+        //this.setDescription("whoseProduct");
     }
     
     public Product getProduct() {        

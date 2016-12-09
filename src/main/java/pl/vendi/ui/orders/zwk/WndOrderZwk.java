@@ -28,7 +28,7 @@ public class WndOrderZwk extends DocumentWindow {
 
     public WndOrderZwk() {
         super(VOConsts.DOC_TYPE_ZWK);
-        setCaption("Zamówienie");
+        setCaption("Zamówienie TODO");
 
         addItemEditBox(elNewZwkItem);
         addLinkedDocumentsButtons();

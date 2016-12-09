@@ -6,10 +6,14 @@
 package pl.vendi.ui.orders.zwk;
 
 import com.google.common.eventbus.EventBus;
+import com.vaadin.data.Property;
+import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.server.ExternalResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Link;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
@@ -31,7 +35,12 @@ import pl.vo.products.model.Product;
 public class ElNewZwkDocItem extends HorizontalLayout {
 
     BeanItemContainer<Product> cntProducts = new BeanItemContainer<Product>(Product.class);
-    ComboBoxProducts cmbProduct = new ComboBoxProducts("Towar", cntProducts);
+    ComboBoxProducts cmbProduct = new ComboBoxProducts("Towar TODOv01", cntProducts);
+    
+    String url = "https://www.google.pl/maps/dir/Ożarów+Mazowiecki/Wyszków/";
+    Link link = new Link("Trasa dostawy!", new ExternalResource(url));
+    
+    
     TextField tfAmount = new TextField("Ilość");
 
     Button butAdd = new Button("Dodaj");
@@ -51,15 +60,29 @@ public class ElNewZwkDocItem extends HorizontalLayout {
         eventBus = new EventBus("document");
 
         List<Product> products = VOLookup.lookupProductsApi().findAll();
+        
+        for ( Product p : products )
+        {
+           p.setNameAndProvider( p.getName() + " (" + p.getWhoseProduct() + ")");
+        }
+        
         cntProducts.addAll(products);
 
         this.setDefaultComponentAlignment(Alignment.BOTTOM_CENTER);
         this.setSpacing(true);
+        
+        
         this.addComponent(cmbProduct);
+        cmbProduct.addListener(listener);
         cmbProduct.setWidth("400px");
+        
         this.addComponent(tfAmount);
         this.addComponent(butAdd);
         this.addComponent( butAddMany);
+        
+        link.setTargetName("_blank");
+        link.setVisible(false);
+        this.addComponent( link);
 
         butAdd.addStyleName(ValoTheme.BUTTON_PRIMARY);
         butAdd.addClickListener(new Button.ClickListener() {
@@ -134,5 +157,16 @@ public class ElNewZwkDocItem extends HorizontalLayout {
 
         parentWindow.setModified(true);
     }
+    
+    
+    Property.ValueChangeListener listener = new Property.ValueChangeListener() {
+    public void valueChange(ValueChangeEvent event) {
+      Product p = cmbProduct.getProduct();
+      url = "https://www.google.pl/maps/dir/" + document.getCompanyUnit().getAddress() + "/" + p.getWhoseProduct();
+      link.setResource(new ExternalResource(url));
+      link.setVisible(true);  
+
+    }
+};
 
 }

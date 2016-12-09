@@ -73,6 +73,14 @@ public class Product extends AuditEntityBase implements Serializable
      
      @Transient
      private BigDecimal quantity; 
+     
+     @Size(max=100)
+     @Column(name="WHOSE_PRODUCT")
+     private String whoseProduct;
+     
+     @Transient
+     private String nameAndProvider; 
+     
 
     public String getAbbr() {
         return abbr;
@@ -121,6 +129,25 @@ public class Product extends AuditEntityBase implements Serializable
     public void setMeasureUnit(MeasureUnit measureUnit) {
         this.measureUnit = measureUnit;
     }
+
+    public String getWhoseProduct() {
+        return whoseProduct;
+    }
+
+    public void setWhoseProduct(String whoseProduct) {
+        this.whoseProduct = whoseProduct;
+    }
+
+    public String getNameAndProvider() {
+        return nameAndProvider;
+    }
+
+    public void setNameAndProvider(String nameAndProvider) {
+        this.nameAndProvider = nameAndProvider;
+    }
+    
+    
+    
 
     @Override
     public int hashCode() {
