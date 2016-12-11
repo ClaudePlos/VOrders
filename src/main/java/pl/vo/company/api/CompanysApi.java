@@ -64,6 +64,23 @@ public class CompanysApi extends GenericDao< Company, Long> implements Serializa
         }
 
     }
+    
+    public Company getById(Long id) throws VoNoResultException {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Company> cq = cb.createQuery(Company.class);
+        Root<Company> root = cq.from(Company.class);
+
+        Predicate eq = cb.equal(root.get("id"), cb.literal(id));
+        cq.where(eq);
+        cq.select(root);
+        try {
+            Company ret = (Company) em.createQuery(cq).getSingleResult();
+            return ret;
+        } catch (NoResultException nre) {
+            throw new VoNoResultException("Nie znaleziono firmy o id:" + id);
+        }
+
+    }
 
     public Company save(Company company, String username) throws VOWrongDataException {
         if (company.getId() != null) {

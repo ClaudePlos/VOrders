@@ -24,9 +24,12 @@ import pl.vendi.ui.VOLookup;
 import pl.vendi.ui.common.ComboBoxProducts;
 import pl.vendi.ui.documents.elements.DocumentWindow;
 import pl.vendi.ui.events.DocumentChangedEvent;
+import pl.vo.company.api.CompanysApi;
+import pl.vo.company.model.Company;
 import pl.vo.documents.model.Document;
 import pl.vo.documents.model.DocumentItem;
 import pl.vo.products.model.Product;
+import pl.vo.products.model.ProductCmpCode;
 
 /**
  *
@@ -51,6 +54,8 @@ public class ElNewZwkDocItem extends HorizontalLayout {
 
     EventBus eventBus;
     DocumentWindow parentWindow;
+    
+    Company cmp;
 
     public ElNewZwkDocItem(DocumentWindow parentWindow)
     {
@@ -162,7 +167,16 @@ public class ElNewZwkDocItem extends HorizontalLayout {
     Property.ValueChangeListener listener = new Property.ValueChangeListener() {
     public void valueChange(ValueChangeEvent event) {
       Product p = cmbProduct.getProduct();
-      url = "https://www.google.pl/maps/dir/" + document.getCompanyUnit().getAddress() + "/" + p.getWhoseProduct();
+      String addressProvider = null;
+      
+        for ( ProductCmpCode pc :  p.getCodes() )
+        {
+           // p.setAddressProvider( pc.getCmpId() );
+             cmp = VOLookup.lookupCompanysApi().getById( pc.getCmpId() );
+             addressProvider = cmp.getAddress();
+        }             
+      
+      url = "https://www.google.pl/maps/dir/" + document.getCompanyUnit().getAddress() + "/" + addressProvider;
       link.setResource(new ExternalResource(url));
       link.setVisible(true);  
 

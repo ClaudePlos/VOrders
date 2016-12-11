@@ -6,10 +6,12 @@
 package pl.vo.company.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -42,6 +44,9 @@ public class Company extends AuditEntityBase implements Serializable {
 
     private String postCode;
     
+    @Id
+    @Column(name="id")
+    private Long id; 
     
     // integration parameters
     @Size(max =50)
@@ -87,6 +92,16 @@ public class Company extends AuditEntityBase implements Serializable {
     public void setiSendOrder(Boolean iSendOrder) {
         this.iSendOrder = iSendOrder;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+  
 
     
     
