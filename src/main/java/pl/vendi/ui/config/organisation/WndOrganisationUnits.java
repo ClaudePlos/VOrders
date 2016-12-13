@@ -14,11 +14,17 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import pl.vendi.ui.VOLookup;
 import pl.vendi.ui.common.CntContainerUtils;
 import pl.vendi.ui.common.CntRoadDistance;
 import pl.vendi.ui.common.VoExceptionHandler;
+import pl.vo.company.api.CompanysApi;
+import pl.vo.company.model.Company;
+import pl.vo.exceptions.VOWrongDataException;
 import pl.vo.organisation.OrganisationApi;
 import pl.vo.organisation.model.OrganisationUnit;
 import pl.vo.road_distance.api.RoadDistanceApi;
@@ -49,10 +55,12 @@ public class WndOrganisationUnits extends Window
     TextField tfDistance = new TextField("Odległość w km");
 
     HorizontalLayout vboxMain = new HorizontalLayout();
+    
+    List<RoadDistance> listRoadDistance;
 
     OrganisationApi api;
-    
     RoadDistanceApi apiRoad;
+    CompanysApi apiCompanys;
 
     private OrganisationUnit selectedOrganisationUnit;
     
@@ -63,9 +71,9 @@ public class WndOrganisationUnits extends Window
 
         super("Konfiguracja jednostek organizacyjnych");
 
-        api = VOLookup.lookupOrganisationApi();
-        
+        api = VOLookup.lookupOrganisationApi();       
         apiRoad = VOLookup.lookupRoadDistanceApi();
+        apiCompanys = VOLookup.lookupCompanysApi();
 
         this.setContent(vboxMain);
         vboxMain.setSizeFull();;
@@ -283,11 +291,10 @@ public class WndOrganisationUnits extends Window
         }
     }
     
-    private void refreshDistances( Long companyUnitId ) {
-        List<RoadDistance> items = apiRoad.listByCompanyUnitId( companyUnitId );
+    private void refreshDistances( Long companyUnitId ) { 
+        listRoadDistance = apiRoad.listByCompanyUnitId( companyUnitId );
         cntDistances.removeAllItems();
-        cntDistances.addAll(items);
-        
+        cntDistances.addAll(listRoadDistance);  
     }
     
     private void onClicSaveDistance() {
@@ -305,7 +312,7 @@ public class WndOrganisationUnits extends Window
             }
             
             
-            CntRoadDistance.replaceItemWithIdOrAdd(cntCompanys,selectedOrganisationUnit.getId(), selectedOrganisationUnit);
+            CntRoadDistance.replaceItemWithIdOrAdd(cntDistances, selectedRoadDistance.getId(), selectedRoadDistance);
             tblDistance.refreshRowCache();
             selectedRoadDistance = null;
             modelToViewDistance();
@@ -314,6 +321,33 @@ public class WndOrganisationUnits extends Window
     }
     
     private void onClicAddSuppliers() {
+        
+        List<RoadDistance> distSuppliers = new ArrayList<RoadDistance>();
+        List<Company> companys = apiCompanys.findAllCompanys();
+        
+        for ( Company c : companys )
+        {
+            boolean spr = listRoadDistance.stream().anyMatch( rd -> rd.getCompanyId().equals( c.getId() ));
+            if( spr == false )
+            {
+                RoadDistance rdNew = new RoadDistance();
+                rdNew.setCompanyUnitsId( selectedOrganisationUnit.getId() );
+                rdNew.setCompanyId( c.getId() );
+                rdNew.setDistance( Long.valueOf("0") );
+                
+                try {
+                      rdNew = apiRoad.save(rdNew);
+                    } catch (VOWrongDataException ex) {
+                        Logger.getLogger(WndOrganisationUnits.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                
+                CntRoadDistance.replaceItemWithIdOrAdd(cntDistances, rdNew.getId(), rdNew);
+                listRoadDistance.add( rdNew );
+                tblDistance.refreshRowCache();        
+            }
+        }
+
+ 
         
     }
     
