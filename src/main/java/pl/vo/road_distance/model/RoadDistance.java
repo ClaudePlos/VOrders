@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import pl.vo.common.AuditEntityBase;
 
@@ -33,6 +34,9 @@ public class RoadDistance extends AuditEntityBase implements Serializable{
     
     @Column(name="distance")
     private Long distance; 
+    
+    @Transient
+    private String supplierName; 
 
 
     public Long getCompanyUnitsId() {
@@ -57,6 +61,14 @@ public class RoadDistance extends AuditEntityBase implements Serializable{
 
     public void setDistance(Long distance) {
         this.distance = distance;
+    }
+
+    public String getSupplierName() {
+        return supplierName;
+    }
+
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName;
     }
     
     

@@ -17,7 +17,9 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.ConstraintViolationException;
 import pl.common.dao.GenericDao;
+import pl.vendi.ui.VOLookup;
 import pl.vo.common.VoUserSession;
+import pl.vo.company.api.CompanysApi;
 import pl.vo.exceptions.VOWrongDataException;
 import pl.vo.exceptions.VoNoResultException;
 import pl.vo.road_distance.model.RoadDistance;
@@ -34,6 +36,9 @@ public class RoadDistanceApi extends GenericDao<RoadDistance, Long> implements S
     
     @EJB
     VoUserSession voSession;
+    
+    @EJB
+    CompanysApi apiCompanys;
     
     public RoadDistanceApi() {
         super(RoadDistance.class);
@@ -57,6 +62,12 @@ public class RoadDistanceApi extends GenericDao<RoadDistance, Long> implements S
        
           cq.select(root);
         List<RoadDistance> ret = ( List<RoadDistance> ) em.createQuery( cq).getResultList(); 
+        
+        for ( RoadDistance rd : ret )
+        {
+            rd.setSupplierName( apiCompanys.getById( rd.getCompanyId() ).getName() );
+        }
+        
         return ret; 
      }
     
@@ -85,7 +96,7 @@ public class RoadDistanceApi extends GenericDao<RoadDistance, Long> implements S
             distance = em.merge(distance);
         }
 
-        VoUserSession.fillAudit(distance,getLoggedUser());
+        //VoUserSession.fillAudit(distance,getLoggedUser());
         try {
             em.persist(distance);
             em.flush();
@@ -94,6 +105,9 @@ public class RoadDistanceApi extends GenericDao<RoadDistance, Long> implements S
         } catch (Exception e) {
             throw new VOWrongDataException("Nie udało się zapisać distance:" + e.getMessage());
         }
+        
+        distance.setSupplierName( apiCompanys.getById( distance.getCompanyId() ).getName() );
+        
         return distance;
     }
     

@@ -126,8 +126,8 @@ public class WndOrganisationUnits extends Window
         
         tblDistance.setContainerDataSource(cntDistances);
         cntDistances.setBeanIdProperty("id");
-        tblDistance.setVisibleColumns(new String[]{"id", "companyUnitsId", "companyId", "distance"});
-        tblDistance.setColumnHeaders(new String[]{"ID", "companyUnitsId", "companyId", "distance"});
+        tblDistance.setVisibleColumns(new String[]{"supplierName", "distance"});
+        tblDistance.setColumnHeaders(new String[]{"Dostawca",  "Odległość"});
         tblDistance.setWidth("100%");
         tblDistance.setHeight("180px");
         vboxDistance.addComponent( tblDistance );
@@ -303,7 +303,7 @@ public class WndOrganisationUnits extends Window
         {
             viewToModelDistance();
             try {
-                selectedRoadDistance = apiRoad.save(selectedRoadDistance);
+                selectedRoadDistance = apiRoad.save(selectedRoadDistance, "admin");
             }
             catch ( Exception wre )
             {
@@ -321,8 +321,7 @@ public class WndOrganisationUnits extends Window
     }
     
     private void onClicAddSuppliers() {
-        
-        List<RoadDistance> distSuppliers = new ArrayList<RoadDistance>();
+
         List<Company> companys = apiCompanys.findAllCompanys();
         
         for ( Company c : companys )
