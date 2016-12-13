@@ -271,7 +271,7 @@ public class WndOrganisationUnits extends Window
             tfDistance.setValue( selectedRoadDistance.getDistance().toString() );           
         }
         else {
-            tfDistance.setValue( null );  
+            tfDistance.setValue( "" );  
         }     
     }
     
