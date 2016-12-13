@@ -17,11 +17,12 @@ import com.vaadin.ui.Window;
 import java.util.List;
 import pl.vendi.ui.VOLookup;
 import pl.vendi.ui.common.CntContainerUtils;
+import pl.vendi.ui.common.CntRoadDistance;
 import pl.vendi.ui.common.VoExceptionHandler;
-import pl.vo.company.api.CompanysApi;
-import pl.vo.company.model.Company;
 import pl.vo.organisation.OrganisationApi;
 import pl.vo.organisation.model.OrganisationUnit;
+import pl.vo.road_distance.api.RoadDistanceApi;
+import pl.vo.road_distance.model.RoadDistance;
 
 /**
  *
@@ -30,20 +31,32 @@ import pl.vo.organisation.model.OrganisationUnit;
 public class WndOrganisationUnits extends Window
 {
     BeanContainer<Long,OrganisationUnit> cntCompanys = new BeanContainer<Long,OrganisationUnit>(OrganisationUnit.class);
+    
+    BeanContainer<Long, RoadDistance> cntDistances = new BeanContainer<Long, RoadDistance>(RoadDistance.class);
 
     Table tblCompany = new Table("Firmy");
+    
+    Table tblDistance = new Table("Odległość do dostawców");
 
     VerticalLayout vboxEdit = new VerticalLayout();
+    
+    VerticalLayout vboxDistance = new VerticalLayout();
 
     TextField tfName = new TextField("Nazwa Obiektu");
     TextField tfCode = new TextField("Kod");
     TextField tfAddress = new TextField("Adres");
+    
+    TextField tfDistance = new TextField("Odległość w km");
 
     HorizontalLayout vboxMain = new HorizontalLayout();
 
     OrganisationApi api;
+    
+    RoadDistanceApi apiRoad;
 
     private OrganisationUnit selectedOrganisationUnit;
+    
+    private RoadDistance selectedRoadDistance;
 
     public WndOrganisationUnits()
     {
@@ -51,18 +64,23 @@ public class WndOrganisationUnits extends Window
         super("Konfiguracja jednostek organizacyjnych");
 
         api = VOLookup.lookupOrganisationApi();
+        
+        apiRoad = VOLookup.lookupRoadDistanceApi();
 
         this.setContent(vboxMain);
         vboxMain.setSizeFull();;
         vboxMain.setSpacing(true);
         vboxMain.setMargin(true);
 
+        
         vboxMain.addComponent(tblCompany);
         vboxMain.addComponent(vboxEdit);
+        vboxMain.addComponent(vboxDistance);
 
         vboxMain.setExpandRatio(tblCompany, 0.6f);
         vboxMain.setExpandRatio(vboxEdit, 0.3f);
         vboxEdit.setWidth("200px");
+        vboxDistance.setWidth("300px");
         // 
         
         tblCompany.setContainerDataSource(cntCompanys);
@@ -72,7 +90,8 @@ public class WndOrganisationUnits extends Window
         tblCompany.setVisibleColumns(new String[]{"id","name","code", "address"});
         
         tblCompany.setSelectable( true );
-
+        
+        
         vboxEdit.addComponent(tfName);
         vboxEdit.addComponent(tfCode);
         vboxEdit.addComponent( tfAddress );
@@ -92,8 +111,31 @@ public class WndOrganisationUnits extends Window
 
         vboxEdit.addComponent(butAdd);
         vboxEdit.addComponent(butSave);
+        
+        Button butAddSuppliers = new Button("Dodaj brakujących dostawców");
+        Button butSaveDistance = new Button("Zapisz odległość");
+        butAddSuppliers.setVisible(false);
+        
+        tblDistance.setContainerDataSource(cntDistances);
+        cntDistances.setBeanIdProperty("id");
+        tblDistance.setVisibleColumns(new String[]{"id", "companyUnitsId", "companyId", "distance"});
+        tblDistance.setColumnHeaders(new String[]{"ID", "companyUnitsId", "companyId", "distance"});
+        tblDistance.setWidth("100%");
+        tblDistance.setHeight("180px");
+        vboxDistance.addComponent( tblDistance );
+        
+        tblDistance.setSelectable( true );
+        vboxDistance.addComponent( tfDistance );
+        vboxDistance.addComponent( butSaveDistance );
+        vboxDistance.addComponent( butAddSuppliers );
+        
+    
+
+        
 
         refreshCompanys();
+        
+        
 
         butAdd.addClickListener(new Button.ClickListener() {
 
@@ -112,6 +154,14 @@ public class WndOrganisationUnits extends Window
             }
         });
         
+        butSaveDistance.addClickListener(new Button.ClickListener() {
+
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                onClicSaveDistance();
+            }
+        });
+        
         
         tblCompany.addItemClickListener(new ItemClickEvent.ItemClickListener() {
 
@@ -120,6 +170,29 @@ public class WndOrganisationUnits extends Window
                 BeanItem<OrganisationUnit> biUser = (BeanItem<OrganisationUnit>) event.getItem();
                 selectedOrganisationUnit = biUser != null ? biUser.getBean()  : null;
                 modelToView();
+                
+                refreshDistances( selectedOrganisationUnit.getId() );
+                butAddSuppliers.setVisible(true);
+            }
+        });
+        
+        
+        tblDistance.addItemClickListener(new ItemClickEvent.ItemClickListener() {
+
+            @Override
+            public void itemClick(ItemClickEvent event) {
+                BeanItem<RoadDistance> biUser = (BeanItem<RoadDistance>) event.getItem();
+                selectedRoadDistance = biUser != null ? biUser.getBean()  : null;
+                modelToViewDistance();
+            }
+        });
+        
+        
+        butAddSuppliers.addClickListener(new Button.ClickListener() {
+
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                onClicAddSuppliers();
             }
         });
 
@@ -131,22 +204,22 @@ public class WndOrganisationUnits extends Window
         cntCompanys.addAll(items);
 
     }
+    
+    
 
     private void modelToView() {
         if (selectedOrganisationUnit != null) 
         {
-           
-            tfName.setValue(selectedOrganisationUnit.getName());
+           tfName.setValue(selectedOrganisationUnit.getName());
            tfCode.setValue(selectedOrganisationUnit.getCode());
            tfAddress.setValue (selectedOrganisationUnit.getAddress());
-           
+           tfDistance.setValue("");
         }
-        else {
-            
-            tfName.setValue(null);
-         
+        else { 
+           tfName.setValue(null);
            tfCode.setValue( null);
            tfAddress.setValue (null);
+           tfDistance.setValue("");
         }
        
     }
@@ -188,6 +261,60 @@ public class WndOrganisationUnits extends Window
             selectedOrganisationUnit = null;
             modelToView();
         }
+    }
+    
+    
+    private void modelToViewDistance() {
+        
+        if (selectedRoadDistance != null) 
+        {
+            tfDistance.setValue( selectedRoadDistance.getDistance().toString() );           
+        }
+        else {
+            tfDistance.setValue( null );  
+        }     
+    }
+    
+    private void viewToModelDistance()
+    {
+        if (selectedRoadDistance != null)
+        {
+            selectedRoadDistance.setDistance( Long.parseLong(tfDistance.getValue()) );
+        }
+    }
+    
+    private void refreshDistances( Long companyUnitId ) {
+        List<RoadDistance> items = apiRoad.listByCompanyUnitId( companyUnitId );
+        cntDistances.removeAllItems();
+        cntDistances.addAll(items);
+        
+    }
+    
+    private void onClicSaveDistance() {
+        
+        if (selectedRoadDistance != null)
+        {
+            viewToModelDistance();
+            try {
+                selectedRoadDistance = apiRoad.save(selectedRoadDistance);
+            }
+            catch ( Exception wre )
+            {
+                VoExceptionHandler.handleException( wre );
+                return; 
+            }
+            
+            
+            CntRoadDistance.replaceItemWithIdOrAdd(cntCompanys,selectedOrganisationUnit.getId(), selectedOrganisationUnit);
+            tblDistance.refreshRowCache();
+            selectedRoadDistance = null;
+            modelToViewDistance();
+        }
+        
+    }
+    
+    private void onClicAddSuppliers() {
+        
     }
     
    

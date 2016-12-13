@@ -44,10 +44,7 @@ public class Company extends AuditEntityBase implements Serializable {
 
     private String postCode;
     
-    @Id
-    @Column(name="id")
-    private Long id; 
-    
+ 
     // integration parameters
     @Size(max =50)
     @Column(name="integration_type")
@@ -93,17 +90,7 @@ public class Company extends AuditEntityBase implements Serializable {
         this.iSendOrder = iSendOrder;
     }
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-  
-
-    
     
     public String getName() {
         return name;
