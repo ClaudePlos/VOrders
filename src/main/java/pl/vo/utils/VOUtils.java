@@ -7,9 +7,11 @@ package pl.vo.utils;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import org.apache.commons.lang.time.DateUtils;
 
 /**
@@ -18,6 +20,7 @@ import org.apache.commons.lang.time.DateUtils;
  */
 public class VOUtils {
     
+    final static Locale locale = new Locale("fi", "FI");
     
   	public static String formaDateYYYYMMDDHHMI(Date date) {
 		if (date == null)
@@ -32,8 +35,8 @@ public class VOUtils {
             if (val == null )
                 return "";
             
-            DecimalFormat df = new DecimalFormat("#,##");
-            String ret = df.format(val)+" zł";
+            DecimalFormat df = new DecimalFormat("0.00", new DecimalFormatSymbols(locale) );
+            String ret = df.format(val); //+" PLN";
             return ret; 
         }
 	

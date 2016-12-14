@@ -140,7 +140,9 @@ public class DocumentItemsTable extends Table {
                         Label lab = new Label();
                         DocumentItem di = (DocumentItem) itemId;
                         if (di != null && di.getUnitPriceNet() != null) {
-                            lab.setValue(di.getUnitPriceNet().toString());
+                            lab.setValue( VOUtils.formatCurrency( di.getUnitPriceNet() ) );
+                            lab.setWidth("100%");
+                            lab.addStyleName( "labelRight");
                         } else {
                             lab.setValue("");
                         }
@@ -259,8 +261,30 @@ public class DocumentItemsTable extends Table {
                 return lab;
 
             }
+
         });
         
+        
+        this.addGeneratedColumn("amount", new ColumnGenerator() {
+
+            @Override
+            public Object generateCell(Table source, final Object itemId, Object columnId) {
+
+                Label lab = new Label();
+                DocumentItem di = (DocumentItem) itemId;
+                if (di != null && di.getAmount() != null) {
+                    lab.setValue( VOUtils.formatCurrency( di.getAmount() ) );
+                    lab.setWidth("100%");
+                    lab.addStyleName( "labelRight");
+                } else {
+                    lab.setValue("");
+                }
+
+                return lab;
+
+            }
+
+        });
         
         this.addGeneratedColumn("valueNet", new ColumnGenerator() {
 
@@ -453,12 +477,12 @@ public class DocumentItemsTable extends Table {
             if ( document != null && document.getStatus().equals( VOConsts.DOC_STATUS_OPEN))
                  addColumn("unitPriceNetEdit", "Cena Edycja");
                 else
-            addColumn("unitPriceNet", "Cena");
+            addColumn("unitPriceNet", "Cena PLN");
         }
         
         if (   documentTypeGroup.equals(VOConsts.DOC_TYPE_ZWK) && document != null && !document.getStatus().equals( VOConsts.DOC_STATUS_OPEN))
         {
-           addColumn("unitPriceNet", "Cena"); 
+           addColumn("unitPriceNet", "Cena PLN"); 
         }
        // }
 
@@ -507,9 +531,9 @@ public class DocumentItemsTable extends Table {
         if (document != null && !document.getStatus().equals(VOConsts.DOC_STATUS_OPEN) &&
                 !documentTypeGroup.equals(VOConsts.DOC_TYPE_PRICE_LIST)) 
         {
-            addColumn("valueNet", "Netto");
-            addColumn("valueTax", "Vat");
-            addColumn("valueBrut", "Brutto");
+            addColumn("valueNet", "Netto PLN");
+            addColumn("valueTax", "Vat PLN");
+            addColumn("valueBrut", "Brutto PLN");
             addColumn("unitProductSupplier.supplier.abbr", "Dostawca");
         }
 
