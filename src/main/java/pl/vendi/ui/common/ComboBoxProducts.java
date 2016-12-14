@@ -25,7 +25,7 @@ public class ComboBoxProducts extends ComboBox {
         this.setCaption(caption);
         this.setContainerDataSource(container);
         this.setItemCaptionMode(AbstractSelect.ItemCaptionMode.PROPERTY);
-        this.setItemCaptionPropertyId("nameAndProvider");
+        this.setItemCaptionPropertyId("name");
         //this.setDescription("whoseProduct");
     }
     

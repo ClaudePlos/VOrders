@@ -77,10 +77,7 @@ public class Product extends AuditEntityBase implements Serializable
      @Size(max=100)
      @Column(name="WHOSE_PRODUCT")
      private String whoseProduct;
-     
-     @Transient
-     private String nameAndProvider; 
-     
+
      @Transient
      private String addressProvider; 
      
@@ -139,14 +136,6 @@ public class Product extends AuditEntityBase implements Serializable
 
     public void setWhoseProduct(String whoseProduct) {
         this.whoseProduct = whoseProduct;
-    }
-
-    public String getNameAndProvider() {
-        return nameAndProvider;
-    }
-
-    public void setNameAndProvider(String nameAndProvider) {
-        this.nameAndProvider = nameAndProvider;
     }
 
     public String getAddressProvider() {

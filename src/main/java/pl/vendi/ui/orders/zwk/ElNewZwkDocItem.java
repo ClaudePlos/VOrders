@@ -65,12 +65,6 @@ public class ElNewZwkDocItem extends HorizontalLayout {
         eventBus = new EventBus("document");
 
         List<Product> products = VOLookup.lookupProductsApi().findAll();
-        
-        for ( Product p : products )
-        {
-           p.setNameAndProvider( p.getName() + " (" + p.getWhoseProduct() + ")");
-        }
-        
         cntProducts.addAll(products);
 
         this.setDefaultComponentAlignment(Alignment.BOTTOM_CENTER);
