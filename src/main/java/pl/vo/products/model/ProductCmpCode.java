@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import pl.vo.common.AuditEntityBase;
 
@@ -34,6 +35,9 @@ public class ProductCmpCode extends AuditEntityBase implements Serializable
     
     @Column(name="code")
     String code;
+    
+    @Transient
+    private Long distanceDelivery; 
 
     public Product getProduct() {
         return product;
@@ -58,6 +62,16 @@ public class ProductCmpCode extends AuditEntityBase implements Serializable
     public void setCode(String code) {
         this.code = code;
     }
+
+    public Long getDistanceDelivery() {
+        return distanceDelivery;
+    }
+
+    public void setDistanceDelivery(Long distanceDelivery) {
+        this.distanceDelivery = distanceDelivery;
+    }
+    
+    
 
     @Override
     public int hashCode() {

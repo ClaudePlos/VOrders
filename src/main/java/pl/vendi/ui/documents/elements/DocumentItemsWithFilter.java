@@ -11,6 +11,7 @@ import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.PopupView;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import java.util.ArrayList;
@@ -132,4 +133,11 @@ public class DocumentItemsWithFilter extends VerticalLayout {
             
         }
     }
+    
+    
+    public void getInfo(DocumentItem itemId) {
+        
+        
+    }
+    
 }

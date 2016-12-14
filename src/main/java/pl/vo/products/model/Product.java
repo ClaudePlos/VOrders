@@ -81,6 +81,8 @@ public class Product extends AuditEntityBase implements Serializable
      @Transient
      private String addressProvider; 
      
+     
+     
 
     public String getAbbr() {
         return abbr;
@@ -145,6 +147,8 @@ public class Product extends AuditEntityBase implements Serializable
     public void setAddressProvider(String addressProvider) {
         this.addressProvider = addressProvider;
     }
+
+  
     
     
     

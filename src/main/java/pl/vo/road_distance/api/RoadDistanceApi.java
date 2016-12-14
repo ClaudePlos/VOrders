@@ -90,6 +90,25 @@ public class RoadDistanceApi extends GenericDao<RoadDistance, Long> implements S
     }
     
     
+    public RoadDistance getByCmpUnitIdAndCmpId(Long idCompanyUnits, Long idCompany) throws VoNoResultException {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<RoadDistance> cq = cb.createQuery(RoadDistance.class);
+        Root<RoadDistance> root = cq.from(RoadDistance.class);
+
+        Predicate eq = cb.and(cb.equal(root.get("companyUnitsId"), cb.literal(idCompanyUnits)),
+                              cb.equal(root.get("companyId"), cb.literal(idCompany)));
+        cq.where(eq);
+        cq.select(root);
+        try {
+            RoadDistance ret = (RoadDistance) em.createQuery(cq).getSingleResult();
+            return ret;
+        } catch (NoResultException nre) {
+            throw new VoNoResultException("Nie znaleziono distance o id:" + idCompanyUnits);
+        }
+
+    }
+    
+    
     
     public RoadDistance save(RoadDistance distance, String username) throws VOWrongDataException {
         if (distance.getId() != null) {

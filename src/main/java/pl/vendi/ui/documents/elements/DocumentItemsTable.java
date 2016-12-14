@@ -10,15 +10,20 @@ import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.ItemClickEvent;
+import com.vaadin.server.AbstractErrorMessage.ContentMode;
+import com.vaadin.server.ExternalResource;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Link;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.PopupView;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TableFieldFactory;
 import com.vaadin.ui.TextField;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -26,9 +31,15 @@ import java.util.List;
 import pl.vendi.ui.VOLookup;
 import pl.vendi.ui.common.ComboBoxProducts;
 import pl.vo.VOConsts;
+import pl.vo.company.api.CompanysApi;
+import pl.vo.company.model.Company;
 import pl.vo.documents.model.Document;
 import pl.vo.documents.model.DocumentItem;
+import pl.vo.organisation.model.OrganisationUnit;
 import pl.vo.products.model.Product;
+import pl.vo.products.model.ProductCmpCode;
+import pl.vo.road_distance.api.RoadDistanceApi;
+import pl.vo.road_distance.model.RoadDistance;
 import pl.vo.utils.VOUtils;
 
 /**
@@ -50,6 +61,8 @@ public class DocumentItemsTable extends Table {
     
     final DocumentWindow parentWindow; 
     DocumentItemsWithFilter parent; 
+    
+    RoadDistanceApi apiRoad;
 
     public DocumentItemsTable(String documentTypeGroup, DocumentWindow parentWindow , DocumentItemsWithFilter parent)
     {
@@ -59,6 +72,8 @@ public class DocumentItemsTable extends Table {
         this.documentTypeGroup = documentTypeGroup;
         List<Product> products = VOLookup.lookupProductsApi().findAll();
         cntProducts.addAll(products);
+        
+        apiRoad = VOLookup.lookupRoadDistanceApi();
 
         this.setContainerDataSource(cnt);
 
@@ -288,6 +303,72 @@ public class DocumentItemsTable extends Table {
             }
         });
         
+        this.addGeneratedColumn("info", new ColumnGenerator() {
+
+            @Override
+            public Object generateCell(Table source, final Object itemId, Object columnId) {
+                
+
+                VerticalLayout popupContent = new VerticalLayout();
+                String namePoPup = "";
+                DocumentItem di = (DocumentItem) itemId;
+                
+                // KLAUDIUSZ add sprawdzam drogę dostawy 
+                if ( di.getProduct().getCodes().size() > 1 )
+                {
+                    namePoPup = "Info";
+                    OrganisationUnit orgDestination = document.getCompanyUnit();
+                    int smallestDistance = 500000;
+
+                    for ( ProductCmpCode pcc : di.getProduct().getCodes() )
+                    {
+                        Product p = pcc.getProduct();
+
+                        RoadDistance distance = apiRoad.getByCmpUnitIdAndCmpId( orgDestination.getId(), pcc.getCmpId() );
+
+                        pcc.setDistanceDelivery( distance.getDistance() );
+                        
+                        if ( pcc.getDistanceDelivery().intValue() < smallestDistance )
+                        {
+                            smallestDistance = pcc.getDistanceDelivery().intValue();
+                        }
+                        
+                    }
+
+                    for ( ProductCmpCode pcc :  di.getProduct().getCodes() )
+                    {
+                        Company cmp = VOLookup.lookupCompanysApi().getById(  pcc.getCmpId() );
+                        
+                        String url = "https://www.google.pl/maps/dir/Ożarów+Mazowiecki/Wyszków/";
+                        Link link = new Link("Trasa dostawy!", new ExternalResource(url));
+                        link.setTargetName("_blank");
+                        url = "https://www.google.pl/maps/dir/" + document.getCompanyUnit().getAddress() + "/" + cmp.getAddress();
+                        link.setResource(new ExternalResource(url));
+                        
+                        if ( pcc.getDistanceDelivery().intValue() == smallestDistance )
+                        {
+                          Label label1 = new Label( new Label( cmp.getName() + " (" + pcc.getDistanceDelivery().toString() + " km)"   ) );
+                          label1.setStyleName( ValoTheme.LABEL_SUCCESS);
+                          popupContent.addComponent( label1 );
+                          popupContent.addComponent(link);
+                        }
+                        else
+                        {
+                          popupContent.addComponent( new Label( cmp.getName() + " (" + pcc.getDistanceDelivery().toString() + " km)"   )    );
+                          popupContent.addComponent(link);  
+                        }
+                        
+                    }
+                }
+                
+
+                PopupView popup = new PopupView(namePoPup, popupContent);
+
+                return popup;
+
+            }
+        });
+        
          
         this.addGeneratedColumn("valueBrut", new ColumnGenerator() {
 
@@ -375,9 +456,13 @@ public class DocumentItemsTable extends Table {
             if ( document != null && document.getStatus().equals( VOConsts.DOC_STATUS_OPEN))
             {
                 addColumn("amountEdit", "Ilość zamawiana"); 
+                addColumn("info", "Info");
             }
             else
-                 addColumn("amount", "Ilość zamawiana");
+            {
+                addColumn("amount", "Ilość zamawiana");    
+            }
+                 
         }
        
                 if ( documentTypeGroup.equals(VOConsts.DOC_TYPE_ZWD)) {

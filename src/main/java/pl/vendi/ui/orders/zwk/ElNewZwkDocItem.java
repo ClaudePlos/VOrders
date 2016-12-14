@@ -28,8 +28,11 @@ import pl.vo.company.api.CompanysApi;
 import pl.vo.company.model.Company;
 import pl.vo.documents.model.Document;
 import pl.vo.documents.model.DocumentItem;
+import pl.vo.organisation.model.OrganisationUnit;
 import pl.vo.products.model.Product;
 import pl.vo.products.model.ProductCmpCode;
+import pl.vo.road_distance.api.RoadDistanceApi;
+import pl.vo.road_distance.model.RoadDistance;
 
 /**
  *
@@ -38,11 +41,9 @@ import pl.vo.products.model.ProductCmpCode;
 public class ElNewZwkDocItem extends HorizontalLayout {
 
     BeanItemContainer<Product> cntProducts = new BeanItemContainer<Product>(Product.class);
-    ComboBoxProducts cmbProduct = new ComboBoxProducts("Towar TODOv01", cntProducts);
+    ComboBoxProducts cmbProduct = new ComboBoxProducts("Towar", cntProducts);
     
-    String url = "https://www.google.pl/maps/dir/Ożarów+Mazowiecki/Wyszków/";
-    Link link = new Link("Trasa dostawy!", new ExternalResource(url));
-    
+       
     
     TextField tfAmount = new TextField("Ilość");
 
@@ -56,11 +57,14 @@ public class ElNewZwkDocItem extends HorizontalLayout {
     DocumentWindow parentWindow;
     
     Company cmp;
+    
+    RoadDistanceApi apiRoad;
 
     public ElNewZwkDocItem(DocumentWindow parentWindow)
     {
         this.parentWindow = parentWindow;
       
+        apiRoad = VOLookup.lookupRoadDistanceApi();
         
         eventBus = new EventBus("document");
 
@@ -72,16 +76,13 @@ public class ElNewZwkDocItem extends HorizontalLayout {
         
         
         this.addComponent(cmbProduct);
-        cmbProduct.addListener(listener);
         cmbProduct.setWidth("400px");
         
         this.addComponent(tfAmount);
         this.addComponent(butAdd);
         this.addComponent( butAddMany);
         
-        link.setTargetName("_blank");
-        link.setVisible(false);
-        this.addComponent( link);
+      
 
         butAdd.addStyleName(ValoTheme.BUTTON_PRIMARY);
         butAdd.addClickListener(new Button.ClickListener() {
@@ -99,6 +100,7 @@ public class ElNewZwkDocItem extends HorizontalLayout {
                 addManyItems();
             }
         });
+       
 
     }
 
@@ -138,6 +140,9 @@ public class ElNewZwkDocItem extends HorizontalLayout {
             Notification.show("Błędny format ilości", Notification.Type.ERROR_MESSAGE);
             return;
         }
+        
+        
+        
         // sprawdz czy nie ma juz tej pozycji towarowej
         if (document.hasItemWithProduct(cmbProduct.getProduct())) {
             Notification.show("Dokument zawiera już pozycję z towarem:" + cmbProduct.getProduct());
@@ -156,25 +161,5 @@ public class ElNewZwkDocItem extends HorizontalLayout {
 
         parentWindow.setModified(true);
     }
-    
-    
-    Property.ValueChangeListener listener = new Property.ValueChangeListener() {
-    public void valueChange(ValueChangeEvent event) {
-      Product p = cmbProduct.getProduct();
-      String addressProvider = null;
-      
-        for ( ProductCmpCode pc :  p.getCodes() )
-        {
-           // p.setAddressProvider( pc.getCmpId() );
-             cmp = VOLookup.lookupCompanysApi().getById( pc.getCmpId() );
-             addressProvider = cmp.getAddress();
-        }             
-      
-      url = "https://www.google.pl/maps/dir/" + document.getCompanyUnit().getAddress() + "/" + addressProvider;
-      link.setResource(new ExternalResource(url));
-      link.setVisible(true);  
-
-    }
-};
 
 }
