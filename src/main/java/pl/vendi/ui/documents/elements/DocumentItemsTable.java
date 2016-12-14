@@ -310,13 +310,12 @@ public class DocumentItemsTable extends Table {
                 
 
                 VerticalLayout popupContent = new VerticalLayout();
-                String namePoPup = "";
+                String namePoPup = "Info";
                 DocumentItem di = (DocumentItem) itemId;
                 
                 // KLAUDIUSZ add sprawdzam drogę dostawy 
-                if ( di.getProduct().getCodes().size() > 1 )
-                {
-                    namePoPup = "Info";
+                
+                  
                     OrganisationUnit orgDestination = document.getCompanyUnit();
                     int smallestDistance = 500000;
 
@@ -334,7 +333,8 @@ public class DocumentItemsTable extends Table {
                         }
                         
                     }
-
+                
+                   
                     for ( ProductCmpCode pcc :  di.getProduct().getCodes() )
                     {
                         Company cmp = VOLookup.lookupCompanysApi().getById(  pcc.getCmpId() );
@@ -345,6 +345,7 @@ public class DocumentItemsTable extends Table {
                         url = "https://www.google.pl/maps/dir/" + document.getCompanyUnit().getAddress() + "/" + cmp.getAddress();
                         link.setResource(new ExternalResource(url));
                         
+                    
                         if ( pcc.getDistanceDelivery().intValue() == smallestDistance )
                         {
                           Label label1 = new Label( new Label( cmp.getName() + " (" + pcc.getDistanceDelivery().toString() + " km)"   ) );
@@ -354,11 +355,21 @@ public class DocumentItemsTable extends Table {
                         }
                         else
                         {
-                          popupContent.addComponent( new Label( cmp.getName() + " (" + pcc.getDistanceDelivery().toString() + " km)"   )    );
+                          Label label1 = new Label( new Label( cmp.getName() + " (" + pcc.getDistanceDelivery().toString() + " km)"   ) );
+                          label1.setStyleName( ValoTheme.LABEL_FAILURE);
+                          popupContent.addComponent( label1 );
                           popupContent.addComponent(link);  
                         }
+                   
+                        
+                        
                         
                     }
+                
+                    
+                if ( di.getProduct().getCodes().size() > 1 )
+                {
+                    namePoPup = "Info*";
                 }
                 
 
