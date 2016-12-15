@@ -108,7 +108,7 @@ public class DocumentItemsTable extends Table {
                         TextField lab = new TextField();
                         DocumentItem di = (DocumentItem) itemId;
                         if (di != null && di.getUnitPriceNet() != null) {
-                            lab.setValue(di.getUnitPriceNet().toString());
+                            lab.setValue( VOUtils.formatCurrency(di.getUnitPriceNet()) );
                         } else {
                             lab.setValue("");
                         }
@@ -213,7 +213,7 @@ public class DocumentItemsTable extends Table {
                 TextField lab = new TextField();
                 DocumentItem di = (DocumentItem) itemId;
                 if (di != null && di.getAmountConfirmed() != null) {
-                    lab.setValue(di.getAmountConfirmed().toString());
+                    lab.setValue( VOUtils.formatCurrency(di.getAmountConfirmed()) );
                 } else {
                     lab.setValue("");
                 }
@@ -233,6 +233,28 @@ public class DocumentItemsTable extends Table {
 
             }
         });
+        
+        
+        this.addGeneratedColumn("amountConfirmed", new ColumnGenerator() {
+
+            @Override
+            public Object generateCell(Table source, final Object itemId, Object columnId) {
+
+                Label lab = new Label();
+                DocumentItem di = (DocumentItem) itemId;
+                if (di != null && di.getAmount() != null) {
+                    lab.setValue( VOUtils.formatCurrency( di.getAmount() ) );
+                    lab.setWidth("100%");
+                    lab.addStyleName( "labelRight");
+                } else {
+                    lab.setValue("");
+                }
+
+                return lab;
+
+            }
+
+        });
 
         this.addGeneratedColumn("amountEdit", new ColumnGenerator() {
 
@@ -242,7 +264,7 @@ public class DocumentItemsTable extends Table {
                 TextField lab = new TextField();
                 DocumentItem di = (DocumentItem) itemId;
                 if (di != null && di.getAmount() != null) {
-                    lab.setValue(di.getAmount().toString());
+                    lab.setValue( VOUtils.formatCurrency(di.getAmount()) );
                 } else {
                     lab.setValue("");
                 }
@@ -315,7 +337,7 @@ public class DocumentItemsTable extends Table {
                 Label lab = new Label();
                         DocumentItem di = (DocumentItem) itemId;
                         if (di != null && di.getValueTax()!= null) {
-                            lab.setValue(VOUtils.formatCurrency(di.getValueTax()));
+                            lab.setValue( VOUtils.formatCurrency(di.getValueTax()) );
                             lab.setWidth("100%");
                             lab.addStyleName( "labelRight");
                             
@@ -413,7 +435,7 @@ public class DocumentItemsTable extends Table {
                 Label lab = new Label();
                         DocumentItem di = (DocumentItem) itemId;
                         if (di != null && di.getValueBrut()!= null) {
-                            lab.setValue(VOUtils.formatCurrency(di.getValueBrut()));
+                            lab.setValue( VOUtils.formatCurrency(di.getValueBrut()) );
                             lab.setWidth("100%");
                             lab.addStyleName( "labelRight");
                             
