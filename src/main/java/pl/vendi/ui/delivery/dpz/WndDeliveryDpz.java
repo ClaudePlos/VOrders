@@ -13,6 +13,7 @@ import java.util.List;
 import pl.vendi.ui.VOLookup;
 import pl.vendi.ui.common.VO_UI_Consts;
 import pl.vendi.ui.documents.elements.DocumentWindow;
+import pl.vendi.ui.orders.zwk.ElNewZwkDocItem;
 import pl.vo.VOConsts;
 import pl.vo.common.model.DictionaryValue;
 import pl.vo.documents.model.Document;
@@ -25,6 +26,8 @@ import pl.vo.integration.edifact.EdifactExport;
  * @author Piotr
  */
 public class WndDeliveryDpz extends DocumentWindow {
+    
+    ElNewDpzAddItem elNewDpzAddItem = new ElNewDpzAddItem(this);
 
     Button butCopyAll = new Button("Skopiuj wszystkie pozycje");
 
@@ -33,6 +36,8 @@ public class WndDeliveryDpz extends DocumentWindow {
     public WndDeliveryDpz() {
         super(VOConsts.DOC_TYPE_DPZ);
         setCaption("Deklarowana dostawa DPZ");
+        
+        addItemEditBox(elNewDpzAddItem);
 
         // add buttons
         hboxBottom.addComponent(butCopyAll);

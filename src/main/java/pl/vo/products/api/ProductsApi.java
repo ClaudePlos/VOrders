@@ -6,6 +6,7 @@
 package pl.vo.products.api;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -148,6 +149,65 @@ public class ProductsApi extends GenericDao<Product, Long>  implements Serializa
             return ret;
         } catch (NoResultException nre) {
             throw new VoNoResultException("Nie znaleziono towaru o indexNumber:" + nameProduct);
+        }
+
+    }
+    
+      
+    // add ks
+    public Product getById(Long id) throws VoNoResultException
+      {
+          // get 
+        String instance_code =  voSession.getLoggedUser().getInstanceCode();
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Product> cq = cb.createQuery(Product.class);
+        Root<Product> root = cq.from(Product.class);
+
+        Predicate eq = cb.equal(root.get("id"), cb.literal(id));
+        cq.where(eq);
+        cq.select(root);
+        
+        try {
+            Product ret = (Product) em.createQuery(cq).getSingleResult();
+            return ret;
+        } catch (NoResultException nre) {
+            throw new VoNoResultException("Nie znaleziono towaru o id:" + id);
+        }
+        catch( NonUniqueResultException nue)
+        {
+             throw new VoNoResultException("Znaleziono kilka towarów o indeksie o id:" + id);
+        }
+
+    }
+      
+     //add ks 
+     public List<Product> getByCmpId(Long cmpId) throws VoNoResultException {
+          
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<ProductCmpCode> cqC = cb.createQuery(ProductCmpCode.class);
+        Root<ProductCmpCode> rootC = cqC.from(ProductCmpCode.class);
+        
+          cqC.where(  
+                  cb.equal( rootC.get("cmpId"),cb.literal(cmpId))
+          );
+          
+          cqC.select(rootC); 
+
+        try {
+            List<ProductCmpCode> listProdCmp = (List<ProductCmpCode>) em.createQuery( cqC).getResultList();
+            
+            List<Product> listProd = new ArrayList<Product>();
+            
+            for ( ProductCmpCode item : listProdCmp )
+            {
+                Product p =  item.getProduct();
+                listProd.add(p);
+            }
+            
+        
+            return listProd;
+        } catch (NoResultException nre) {
+            throw new VoNoResultException("Nie znaleziono towarow dla cmpId:" + cmpId);
         }
 
     }
