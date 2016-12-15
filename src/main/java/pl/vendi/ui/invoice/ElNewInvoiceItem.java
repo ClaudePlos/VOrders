@@ -85,7 +85,7 @@ public class ElNewInvoiceItem extends HorizontalLayout {
             return;
         }
         try {
-            amount = new BigDecimal(tfAmount.getValue());
+            amount = new BigDecimal(tfAmount.getValue().replace(",", "."));
         } catch (NumberFormatException nfe) {
             Notification.show("Błędny format ilości", Notification.Type.ERROR_MESSAGE);
             return;
