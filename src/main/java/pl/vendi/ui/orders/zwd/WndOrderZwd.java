@@ -37,8 +37,10 @@ public class WndOrderZwd extends DocumentWindow {
     DocumentsActionsDpzApi documentsDpzApi;
 
     Button butAddDPZ = new Button("Wprowadź deklarowaną dostawę");
-     Button butShowDPZ = new Button("Pokaż dostawy DPZ");
+    Button butShowDPZ = new Button("Pokaż dostawy DPZ");
     Button butGenerateEdifact = new Button("GENERUJ EDIFACT");
+    
+    Button butInvoice = new Button("FV");
 
     public WndOrderZwd() {
 
@@ -84,6 +86,20 @@ public class WndOrderZwd extends DocumentWindow {
 
                 }
             });
+            
+            hboxBottom.addComponent( butInvoice );       
+            butInvoice.addClickListener(new Button.ClickListener() {
+                @Override
+                public void buttonClick(Button.ClickEvent event) {
+                   EdifactExport eoe = new EdifactExport();
+                    try {
+                        String edi = eoe.generate(document);
+                        Notification.show(edi, Notification.Type.ERROR_MESSAGE);
+                    } catch (VOWrongDataException wre) {
+                        Notification.show(wre.getMessage(), Notification.Type.ERROR_MESSAGE);
+                    }
+                }
+            });
 
             hboxBottom.addComponent(butGenerateEdifact);
             butGenerateEdifact.addClickListener(new Button.ClickListener() {
@@ -98,6 +114,11 @@ public class WndOrderZwd extends DocumentWindow {
                     }
                 }
             });
+            
+            
+            
+            
+            
         }
     }
 

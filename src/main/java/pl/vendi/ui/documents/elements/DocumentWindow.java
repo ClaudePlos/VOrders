@@ -66,6 +66,7 @@ public class DocumentWindow extends Window implements Button.ClickListener, Prop
     Button butSave = new Button("Zapisz");
     Button butCancel = new Button("Anuluj");
     Button butPrint = new Button("Drukuj");
+    
 //    Button butChildDocuments = new Button("Dokumenty powiązane");
 
     DocumentsApi documentsApi;
@@ -216,11 +217,13 @@ public class DocumentWindow extends Window implements Button.ClickListener, Prop
         hboxBottom.addComponent(butCancel);
         hboxBottom.addComponent(butSave);
         hboxBottom.addComponent( butPrint );
+        
         butSave.addStyleName(ValoTheme.BUTTON_PRIMARY);
         butCancel.addStyleName(ValoTheme.BUTTON_DANGER);
         butSave.addClickListener(this);
         butCancel.addClickListener(this);
         butPrint.addClickListener( this );
+   
         
         
         //
@@ -293,6 +296,7 @@ public class DocumentWindow extends Window implements Button.ClickListener, Prop
             String url = "../resources/print/document/" + this.document.getId();
             getUI().getPage().open(url, "_blank");
         }
+      
     }
 
     public void setDocument(Document doc) {
