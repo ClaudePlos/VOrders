@@ -73,6 +73,7 @@ public class WndDeliveryDpz extends DocumentWindow {
     @Override
     public void setDocument(Document doc) {
         super.setDocument(doc);
+        elNewDpzAddItem.setDocument(doc, tblPositions.getCnt());
         setAvailablePriceListStatus();
          // read related documents
 
