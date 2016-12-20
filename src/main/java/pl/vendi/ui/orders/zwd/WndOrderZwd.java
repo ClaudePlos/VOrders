@@ -5,48 +5,36 @@
  */
 package pl.vendi.ui.orders.zwd;
 
-import com.itextpdf.text.Chunk;
+
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Paragraph;
+import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.FileDownloader;
-import com.vaadin.server.FileResource;
-import com.vaadin.server.Resource;
 import com.vaadin.server.StreamResource;
-import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Notification;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import pl.vendi.ui.orders.zwk.ElNewZwkDocItem;
 import java.util.ArrayList;
 import java.util.List;
-import javax.ejb.EJB;
-import javax.imageio.ImageIO;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import pl.vendi.ui.VOLookup;
 import pl.vendi.ui.VendiOrdersUI;
 import pl.vendi.ui.common.VO_UI_Consts;
 import pl.vendi.ui.delivery.dpz.WndDeliveryDpz;
 import pl.vendi.ui.documents.elements.DocumentWindow;
 import pl.vendi.ui.orders.fv.FvPrint;
-import pl.vendi.ui.orders.fv.PdfExport;
 import pl.vo.VOConsts;
 import pl.vo.common.model.DictionaryValue;
 import pl.vo.documents.api.DocumentsActionsDpzApi;
 import pl.vo.documents.api.DocumentsActionsZwdApi;
 import pl.vo.documents.model.Document;
+import pl.vo.documents.model.DocumentItem;
 import pl.vo.exceptions.VOWrongDataException;
 import pl.vo.integration.edifact.EdifactExport;
+import pl.vo.products.model.Product;
 
 
-import com.itextpdf.text.pdf.PdfWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 /**
@@ -64,87 +52,33 @@ public class WndOrderZwd extends DocumentWindow {
     Button butAddDPZ = new Button("Wprowadź deklarowaną dostawę");
     Button butShowDPZ = new Button("Pokaż dostawy DPZ");
     Button butGenerateEdifact = new Button("GENERUJ EDIFACT");
+    Button butInvoice = new Button("FV");
     
+    FvPrint fP;
     
 
     public WndOrderZwd() {
 
         super(VOConsts.DOC_TYPE_ZWD);
 
-        documentsZwdApi = VOLookup.lookupDocumentsActionsZwdApi();
-        documentsDpzApi = VOLookup.lookupDocumentsActionsDpzApi();
-
-        setCaption("Zamówienie ZWD");
-
-        addItemEditBox(elNewZwkItem);
         
-        
-     
-        
-        
-        Button butInvoice = new Button("FV");
-        
-        StreamResource myResource = getPDFStream();
-        FileDownloader fileDownloader = new FileDownloader(myResource);
-        fileDownloader.extend(butInvoice);
-
-        hboxBottom.addComponent( butInvoice );  
-        
-    }
-    
-    
-    private StreamResource getPDFStream() {
-        StreamResource.StreamSource source = new StreamResource.StreamSource() {
-
-            public InputStream getStream() {
-                
-                // step 1
-            com.itextpdf.text.Document document = new com.itextpdf.text.Document();
-            // step 2
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            documentsZwdApi = VOLookup.lookupDocumentsActionsZwdApi();
+            documentsDpzApi = VOLookup.lookupDocumentsActionsDpzApi();
             
-                try {
-                    com.itextpdf.text.pdf.PdfWriter.getInstance(document, baos);
-                    
-                    // step 3
-                    document.open();
-
-                    document.add(Chunk.NEWLINE);   //Something like in HTML :-)
-
-                    document.add(new Paragraph("TEST" ));
-
-
-                    document.add(Chunk.NEWLINE);   //Something like in HTML :-)							    
-
-                    document.newPage();            //Opened new page
-
-                    //document.add(list);            //In the new page we are going to add list
-
-                    document.close();
-
-                    //file.close();
-
-                    System.out.println("Pdf created successfully..");
-                    
-                    
-                    
-                    
-                } catch (DocumentException ex) {
-                    Logger.getLogger(WndOrderZwd.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                
-                ByteArrayOutputStream stream = baos;
-                InputStream input = new ByteArrayInputStream(stream.toByteArray());
-                  return input;
-
-            }
-        };
-      StreamResource resource = new StreamResource ( source, "test.pdf" );
-        return resource;
+            setCaption("Zamówienie ZWD");
+            
+            addItemEditBox(elNewZwkItem);
+            
+            hboxBottom.addComponent( butInvoice );
+            
+        try {    
+            fP = new FvPrint();
+        } catch (DocumentException ex) {
+            Logger.getLogger(WndOrderZwd.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(WndOrderZwd.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-    
-   
-    
 
     public void newDocument(String type) {
         Document doc = new Document();
@@ -195,9 +129,25 @@ public class WndOrderZwd extends DocumentWindow {
             });
             
             
+
+
+            StreamResource myResource;
+           
+            try {
+                myResource = fP.runFVStream( document.getId() );
+                FileDownloader fileDownloader = new FileDownloader(myResource);
+                fileDownloader.extend(butInvoice);
+            } catch (DocumentException ex) {
+                Logger.getLogger(WndOrderZwd.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(WndOrderZwd.class.getName()).log(Level.SEVERE, null, ex);
+            }
+                
+           
             
+
             
-            
+
         }
     }
 
