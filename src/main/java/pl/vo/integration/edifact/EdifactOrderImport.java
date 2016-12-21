@@ -312,7 +312,7 @@ public class EdifactOrderImport implements Serializable {
         // fill header
         orderDoc.setDateSend(new Date());
         orderDoc.setType(VOConsts.DOC_TYPE_ZWD);
-        orderDoc.setStatus(VOConsts.DOC_STATUS_CONFIRMED_BY_SUPPLIER);
+        orderDoc.setStatus(VOConsts.DOC_STATUS_RECEIVED_BY_SUPPLIER);
 
         iParseBOM(orderDoc, orders.getBeginningOfMessage());
 
