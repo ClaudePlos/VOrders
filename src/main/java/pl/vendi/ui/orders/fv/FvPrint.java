@@ -31,6 +31,11 @@ import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.pdf.BaseFont;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateful;
 import pl.vo.documents.model.DocumentItem;
@@ -141,34 +146,36 @@ public class FvPrint {
                     table.addCell(getCell("Netto", Element.ALIGN_LEFT, font12b));
                     table.addCell(getCell("VAT", Element.ALIGN_LEFT, font12b));
                     table.addCell(getCell("Brutto", Element.ALIGN_LEFT, font12b));
+                    
+                    
+                    //Locale.setDefault( new Locale("pl","PL") );
+                    DecimalFormat df = new DecimalFormat("#,##0.00");
+  
+                    BigDecimal sumNetto = new BigDecimal(BigInteger.ZERO);
+                    BigDecimal sumTax = new BigDecimal(BigInteger.ZERO);
+                    BigDecimal sumBrutto = new BigDecimal(BigInteger.ZERO);
                    
                     for ( DocumentItem di : order.getItems() ) {
                      
                         table.addCell(getCell( di.getProduct().getName(), Element.ALIGN_LEFT, font12));
-                        table.addCell(getCell( di.getUnitPriceNet().toString(), Element.ALIGN_RIGHT, font12));
-                        table.addCell(getCell( di.getAmount().toString(), Element.ALIGN_RIGHT, font12));
+                        table.addCell(getCell( df.format(di.getUnitPriceNet()).toString(), Element.ALIGN_RIGHT, font12));
+                        table.addCell(getCell( df.format(di.getAmount()).toString(), Element.ALIGN_RIGHT, font12));
                         table.addCell(getCell( di.getProduct().getMeasureUnit().getAbbr(), Element.ALIGN_RIGHT, font12));
-                        table.addCell(getCell( di.getValueNet().toString(), Element.ALIGN_RIGHT, font12));
-                        table.addCell(getCell( di.getValueTax().toString(), Element.ALIGN_RIGHT, font12));
-                        table.addCell(getCell( di.getValueBrut().toString() , Element.ALIGN_RIGHT, font12));
+                        table.addCell(getCell( df.format(di.getValueNet()).toString(), Element.ALIGN_RIGHT, font12));
+                        table.addCell(getCell( df.format(di.getValueTax()).toString(), Element.ALIGN_RIGHT, font12));
+                        table.addCell(getCell( df.format(di.getValueBrut()).toString() , Element.ALIGN_RIGHT, font12));
+                        
+                        sumNetto = sumNetto.add(di.getValueNet());
+                        sumTax = sumTax.add(di.getValueTax());
+                        sumBrutto = sumBrutto.add(di.getValueBrut());
                     }
                     document.add(table);
                     
                     
-                    
-                    
-                 String[] t = new String[20];;
-                 t[1] = ":sdf";
+                   
                 // grand totals
-                
-                PdfPTable t2 = getTotalsTable(
-                "123", "124", "125", "126",
-                t[1], t[1],
-                t[1], t[1], t[1] );
-                
-                
-                document.add( t2
-                        );
+                PdfPTable t2 = getTotalsTable( df.format(sumNetto), df.format(sumTax), df.format(sumBrutto) );
+                document.add( t2 );
  
                 // payment info
                 //document.add(getPaymentInfo(basic.getPaymentReference(), basic.getPaymentMeansPayeeFinancialInstitutionBIC(), basic.getPaymentMeansPayeeAccountIBAN()));
@@ -229,18 +236,14 @@ public class FvPrint {
    
   
     
-    public PdfPTable getTotalsTable(String tBase, String tTax, String tTotal, String tCurrency,
-            String[] type, String[] percentage, String base[], String tax[], String currency[]) throws DocumentException {
-        PdfPTable table = new PdfPTable(6);
+    public PdfPTable getTotalsTable(String tBase, String tTax, String tTotal) throws DocumentException {
+        PdfPTable table = new PdfPTable(3);
         table.setWidthPercentage(100);
-        table.setWidths(new int[]{1, 1, 3, 3, 3, 1});
-        table.addCell(getCell("TAX", Element.ALIGN_LEFT, font12b));
-        table.addCell(getCell("%", Element.ALIGN_RIGHT, font12b));
-        table.addCell(getCell("Base amount:", Element.ALIGN_LEFT, font12b));
-        table.addCell(getCell("Tax amount:", Element.ALIGN_LEFT, font12b));
-        table.addCell(getCell("Total:", Element.ALIGN_LEFT, font12b));
-        table.addCell(getCell("", Element.ALIGN_LEFT, font12b));
-        int n = type.length;
+        table.setWidths(new int[]{ 3, 3, 3});
+        table.addCell(getCell("Razem Netto:", Element.ALIGN_LEFT, font12b));
+        table.addCell(getCell("Razem VAT:", Element.ALIGN_LEFT, font12b));
+        table.addCell(getCell("Razem Brutto:", Element.ALIGN_LEFT, font12b));
+       /* int n = type.length;
         for (int i = 0; i < n; i++) {
             table.addCell(getCell(type[i], Element.ALIGN_RIGHT, font12));
             table.addCell(getCell(percentage[i], Element.ALIGN_RIGHT, font12));
@@ -249,15 +252,13 @@ public class FvPrint {
             double total = Double.parseDouble(base[i]) + Double.parseDouble(tax[i]);
             table.addCell(getCell( "ksTODO" , Element.ALIGN_RIGHT, font12));
             table.addCell(getCell(currency[i], Element.ALIGN_LEFT, font12));
-        }
+        }*/
         PdfPCell cell = getCell("", Element.ALIGN_LEFT, font12b);
         cell.setColspan(2);
         cell.setBorder(PdfPCell.NO_BORDER);
-        table.addCell(cell);
         table.addCell(getCell(tBase, Element.ALIGN_RIGHT, font12b));
         table.addCell(getCell(tTax, Element.ALIGN_RIGHT, font12b));
         table.addCell(getCell(tTotal, Element.ALIGN_RIGHT, font12b));
-        table.addCell(getCell(tCurrency, Element.ALIGN_LEFT, font12b));
         return table;
     }
     
