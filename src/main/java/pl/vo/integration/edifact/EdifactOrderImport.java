@@ -257,7 +257,28 @@ public class EdifactOrderImport implements Serializable {
             }
             if (prodId.getItemNumberIdentification1().getItemNumberTypeCoded().equals("BP")) {
                 String buyerProductId = prodId.getItemNumberIdentification1().getItemNumber();
+                 Product prod = null ;
+                try {
+                     prod = productsApi.getByCmpIndex(buyerProductId, this.doc.getSupplier().getId());
+                      docItem.setProduct( prod );
+                   
+                } catch (VoNoResultException nre) {
+                    
+                    // proboj znalezc wg glownego indexu
+                    
+//                    throw new VOWrongDataException("Nie udało się przetworzyć zamóienia - nieznany towar o indeksie:" + SupplierProductId);
+                }
+                try {
+                     prod = productsApi.getByIndex(buyerProductId);
+                     docItem.setProduct( prod );
+                   
+                } catch (VoNoResultException nre) {
+                    
+                }
             }
+            
+            
+            
         }
 
         for (Quantity quant : quantities)
