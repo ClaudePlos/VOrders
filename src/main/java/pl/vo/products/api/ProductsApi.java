@@ -204,6 +204,11 @@ public class ProductsApi extends GenericDao<Product, Long>  implements Serializa
                 listProd.add(p);
             }
             
+            if ( listProd.size() == 0 )
+            {
+                listProd = findAll();
+            }
+            
         
             return listProd;
         } catch (NoResultException nre) {

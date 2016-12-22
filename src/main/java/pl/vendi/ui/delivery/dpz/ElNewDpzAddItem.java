@@ -105,7 +105,7 @@ public class ElNewDpzAddItem extends HorizontalLayout{
         tfAmount.setVisible(true);
         butAdd.setVisible(true);
 
-        List<Product> products = VOLookup.lookupProductsApi().getByCmpId( document.getSupplier().getId() );
+        List<Product> products = VOLookup.lookupProductsApi().getByCmpId( document.getCompanyUnit().getId() );
         cntProducts.addAll(products);
     }
     
