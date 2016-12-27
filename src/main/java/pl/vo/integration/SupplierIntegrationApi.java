@@ -66,6 +66,7 @@ public class SupplierIntegrationApi implements Serializable {
 
     }
     
+    // add ks
     public void sendSupplierConfirmAvailability(Document doc) throws VOWrongDataException {
         // check supplier integration mode
         Company supplier = doc.getSupplier();
