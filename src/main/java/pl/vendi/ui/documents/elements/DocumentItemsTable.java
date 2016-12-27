@@ -224,7 +224,7 @@ public class DocumentItemsTable extends Table {
                     public void valueChange(Property.ValueChangeEvent event) {
                         String sval = (String) event.getProperty().getValue();
                         DocumentItem di = (DocumentItem) itemId;
-                        di.setAmountConfirmed(new BigDecimal(sval));
+                        di.setAmountConfirmed(new BigDecimal(sval.replace(",", ".")));
                         setModified();
                     }
                 });

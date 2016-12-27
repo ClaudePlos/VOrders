@@ -84,6 +84,9 @@ public class DocumentsActionsZwdApi  extends DocumentActionBase  implements Seri
      
       private Document actionSupplierConfirmAvailability ( Document doc) throws VOWrongDataException
      {
+         
+         integrationApi.sendSupplierConfirmAvailability( doc );
+         
          // change status
          doc.setStatus(VOConsts.DOC_STATUS_CONFIRMED_BY_SUPPLIER);
           return doc;

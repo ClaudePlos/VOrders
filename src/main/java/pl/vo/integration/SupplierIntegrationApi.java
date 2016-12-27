@@ -65,5 +65,15 @@ public class SupplierIntegrationApi implements Serializable {
     public void parseIncomingMessage(String message) {
 
     }
+    
+    public void sendSupplierConfirmAvailability(Document doc) throws VOWrongDataException {
+        // check supplier integration mode
+        Company supplier = doc.getSupplier();
+
+        /// ustal sposob komunikacji z dostawca
+        String msg = imag.createSendOrderToSupplier(doc);
+        sender.sendMessage("Potwierdzenie ilosci", msg, IntegrationMessageTypes.MESSAGE_TYPE_SEND_CONFIRM_AVAILABILITY_SUPPLIER, doc, supplier);
+
+    }
 
 }
