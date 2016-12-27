@@ -59,6 +59,12 @@ public class ElNewZwkDocItem extends HorizontalLayout {
     Company cmp;
     
     RoadDistanceApi apiRoad;
+    
+    
+    Button butZamienniki = new Button("Aktywuj zamiennik");
+    TextField tfAmountZam = new TextField("Ilość");
+    Button butAddZam = new Button("Dodaj zamiennik");
+    
 
     public ElNewZwkDocItem(DocumentWindow parentWindow)
     {
@@ -98,6 +104,22 @@ public class ElNewZwkDocItem extends HorizontalLayout {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 addManyItems();
+            }
+        });
+       
+       
+       
+       
+       tfAmount.setVisible(false);
+        butAdd.setVisible(false);
+        
+        this.addComponent(butZamienniki);
+        butZamienniki.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        butZamienniki.addClickListener(new Button.ClickListener() {
+
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                activeReplacement();
             }
         });
        
@@ -160,6 +182,17 @@ public class ElNewZwkDocItem extends HorizontalLayout {
         eventBus.post(ev);
 
         parentWindow.setModified(true);
+    }
+    
+    private void activeReplacement()
+    {
+        butZamienniki.setVisible(false);
+        cmbProduct.setVisible(true);
+        tfAmount.setVisible(true);
+        butAdd.setVisible(true);
+
+        List<Product> products = VOLookup.lookupProductsApi().getByCmpId( document.getCompanyUnit().getId() );
+        cntProducts.addAll(products);
     }
 
 }

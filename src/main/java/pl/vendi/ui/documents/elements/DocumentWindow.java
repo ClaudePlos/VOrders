@@ -80,6 +80,7 @@ public class DocumentWindow extends Window implements Button.ClickListener, Prop
 
     private String documentType;
     private Component elAddItem = null;
+    private Component elAddItemSupplier = null;
 
     // source document
     Label labSourceDocument = new Label();
@@ -337,7 +338,11 @@ public class DocumentWindow extends Window implements Button.ClickListener, Prop
     private void setEnabledState() {
         hboxTop.setEnabled(isHeaderEditable);
         if (elAddItem != null && document != null) {
-            elAddItem.setVisible(document.getStatus().equals(VOConsts.DOC_STATUS_OPEN));
+            elAddItem.setVisible( document.getStatus().equals(VOConsts.DOC_STATUS_OPEN) );
+        }
+        
+        if (elAddItemSupplier != null && document != null) {
+            elAddItemSupplier.setVisible( document.getStatus().equals(VOConsts.DOC_STATUS_RECEIVED_BY_SUPPLIER));
         }
 
     }
@@ -392,6 +397,11 @@ public class DocumentWindow extends Window implements Button.ClickListener, Prop
     protected void addItemEditBox(Component cmp) {
         vboxMain.addComponent(cmp, vboxMain.getComponentIndex(hboxBottom));
         elAddItem = cmp;
+    }
+    
+    protected void addItemEditBoxSupplier(Component cmp) {
+        vboxMain.addComponent(cmp, vboxMain.getComponentIndex(hboxBottom));
+        elAddItemSupplier = cmp;
     }
 
     protected void setNextStatus(List<DictionaryValue> nextStatuses) {

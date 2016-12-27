@@ -44,6 +44,8 @@ import pl.vo.products.model.Product;
 public class WndOrderZwd extends DocumentWindow {
 
     ElNewZwkDocItem elNewZwkItem = new ElNewZwkDocItem(this);
+    
+    ElZwdDocItemReplace elNewZwkItemSupplier = new ElZwdDocItemReplace(this);
 
     DocumentsActionsZwdApi documentsZwdApi;
 
@@ -69,6 +71,8 @@ public class WndOrderZwd extends DocumentWindow {
             
             addItemEditBox(elNewZwkItem);
             
+            addItemEditBoxSupplier(elNewZwkItemSupplier);
+            
             hboxBottom.addComponent( butInvoice );
             
         try {    
@@ -92,6 +96,7 @@ public class WndOrderZwd extends DocumentWindow {
     public void setDocument(Document doc) {
         super.setDocument(doc);
         elNewZwkItem.setDocument(doc, tblPositions.getCnt());
+        elNewZwkItemSupplier.setDocument(doc, tblPositions.getCnt());
         setAvailablePriceListStatus();
 
         // 
