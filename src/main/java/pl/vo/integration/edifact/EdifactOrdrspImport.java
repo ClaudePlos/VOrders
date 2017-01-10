@@ -39,7 +39,7 @@ import pl.vo.products.model.Product;
 
 /**
  *
- * @author cs
+ * @author k.skowronski
  */
 @SessionScoped
 @Stateful(mappedName = "EdifactOrdrspImport", name = "EdifactOrdrspImport")
