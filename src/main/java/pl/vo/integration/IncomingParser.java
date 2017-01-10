@@ -18,6 +18,7 @@ import org.milyn.SmooksException;
 import org.milyn.edi.unedifact.d96a.D96AInterchangeFactory;
 import org.milyn.edi.unedifact.d96a.DESADV.Desadv;
 import org.milyn.edi.unedifact.d96a.ORDERS.Orders;
+import org.milyn.edi.unedifact.d96a.ORDRSP.Ordrsp;
 import org.milyn.edi.unedifact.d96a.PRICAT.Pricat;
 import org.milyn.smooks.edi.unedifact.model.UNEdifactInterchange;
 import org.milyn.smooks.edi.unedifact.model.r41.UNEdifactInterchange41;
@@ -28,6 +29,7 @@ import pl.vo.documents.model.Document;
 import pl.vo.exceptions.VOWrongDataException;
 import pl.vo.exceptions.VoNoResultException;
 import pl.vo.integration.edifact.EdifactOrderImport;
+import pl.vo.integration.edifact.EdifactOrdrspImport;
 import pl.vo.integration.edifact.EdifactPricatImport;
 import pl.vo.integration.edifact.EdifactProvider;
 import pl.vo.rest.VoRestResponse;
@@ -43,6 +45,9 @@ public class IncomingParser implements Serializable {
 
     @EJB
     EdifactOrderImport orderImport;
+    
+    @EJB
+    EdifactOrdrspImport ordrspImport;
 
     @EJB
     EdifactPricatImport pricatImport;
@@ -144,6 +149,22 @@ public class IncomingParser implements Serializable {
                         Document pricatDoc = pricatImport.parseAndProcess(cmpSender, cmpRecipent, pricat);
                         resp.setDocId(pricatDoc.getId().toString());
                         resp.setDocNumber( pricatDoc.getOwnNumber() );
+                        resp.setStatusCode("OK");
+                        return resp;
+                    } catch (Exception e) {
+
+                        throw new VOWrongDataException("Błąd" + e.getMessage());
+                    }
+
+                }
+                else if (messageObj instanceof Ordrsp ) { // ODRSP robie tylko jako status bo nie chce mi się pisac
+
+                    // parsuj zamowienie / potwierdzenie od dostawcy dla klienta
+                    Ordrsp orders = (Ordrsp) messageObj;
+                    try {
+                        Document orderDoc = ordrspImport.parseAndProcess(cmpSender, cmpRecipent, orders);
+                        resp.setDocId(orderDoc.getId().toString());
+                        resp.setDocNumber( orderDoc.getOwnNumber() );
                         resp.setStatusCode("OK");
                         return resp;
                     } catch (Exception e) {
