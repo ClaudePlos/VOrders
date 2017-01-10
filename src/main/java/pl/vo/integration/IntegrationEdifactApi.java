@@ -35,6 +35,18 @@ public class IntegrationEdifactApi {
 
         return ret;
     }
+    
+    // add ks creates message ORDRSP -  odpowiedź na zamówienie ilosci, zamienniki ewentualnie
+    public String createSendOrderConfirmToClient(Document doc) throws VOWrongDataException {
+        String ret = "";
+        logger.fine("createSendOrderConfirmToClient");
+
+        EdifactExport ediOrderExport = new EdifactExport();
+
+        ret = ediOrderExport.generate(doc);
+
+        return ret;
+    }
 
     public String createSendDpzToClient(Document doc) throws VOWrongDataException {
         String ret = "";

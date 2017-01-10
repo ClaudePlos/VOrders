@@ -19,6 +19,7 @@ import pl.vo.exceptions.VOWrongDataException;
 
 import org.milyn.edi.unedifact.d96a.ORDERS.*;
 import org.milyn.edi.unedifact.d96a.ORDERS.SegmentGroup2;
+import org.milyn.edi.unedifact.d96a.ORDRSP.Ordrsp;
 import org.milyn.edi.unedifact.d96a.common.AdditionalInformation;
 import org.milyn.edi.unedifact.d96a.common.AdditionalProductId;
 import org.milyn.edi.unedifact.d96a.common.BeginningOfMessage;
@@ -65,6 +66,7 @@ import pl.vo.organisation.model.OrganisationUnit;
 public class EdifactExport {
 
     public static String MESSAGE_TYPE_ORDERS = "ORDERS";
+    public static String MESSAGE_TYPE_ORDRSP = "ORDRSP"; // potwierdzenie cen i ilości dostawcy
     public static String MESSAGE_TYPE_DESADV = "DESADV"; // awizo wysylki
 
     D96AInterchangeFactory factory;
@@ -89,16 +91,23 @@ public class EdifactExport {
         interchange = new UNEdifactInterchange41();
         message = new UNEdifactMessage41();
 
-        if (document.getType().equals(VOConsts.DOC_TYPE_ZWD)) {
+        if (document.getType().equals(VOConsts.DOC_TYPE_ZWD) && document.getStatus().equals(VOConsts.DOC_STATUS_CONFIRMED_BY_SUPPLIER)) {
             messageType = "ORDERS";
             generateZwd();
-
         }
+        
+        if (document.getType().equals(VOConsts.DOC_TYPE_ZWD) && document.getStatus().equals(VOConsts.DOC_STATUS_RECEIVED_BY_SUPPLIER)) {
+            messageType = MESSAGE_TYPE_ORDRSP;
+
+            EdifactExportOrdrsp ediOrdrspExport = new EdifactExportOrdrsp();
+            interchange = ediOrdrspExport.generateZwdConfirm(document, message);
+        }
+        
         if (document.getType().equals(VOConsts.DOC_TYPE_DPZ)) {
             messageType = "DESADV";
             generateDpz();
-
         }
+        
         generateCommonFields();
         // save 
         StringWriter ediOutStream = new StringWriter();
@@ -386,6 +395,8 @@ public class EdifactExport {
         }
 
     }
+    
+    
 
     private List<RelatedIdentificationNumbers> getRINforItem(DocumentItem item) {
         List<RelatedIdentificationNumbers> ret = new ArrayList<RelatedIdentificationNumbers>();
@@ -502,6 +513,8 @@ public class EdifactExport {
         interchange.getInterchangeTrailer().setControlRef(messageRef);
 
     }
+    
+    
 
     public void generateDpz() throws VOWrongDataException {
 

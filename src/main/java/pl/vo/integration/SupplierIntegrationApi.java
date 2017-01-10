@@ -72,7 +72,7 @@ public class SupplierIntegrationApi implements Serializable {
         Company supplier = doc.getSupplier();
 
         /// ustal sposob komunikacji z dostawca
-        String msg = imag.createSendOrderToSupplier(doc);
+        String msg = imag.createSendOrderConfirmToClient(doc);
         sender.sendMessage("Potwierdzenie ilosci", msg, IntegrationMessageTypes.MESSAGE_TYPE_SEND_CONFIRM_AVAILABILITY_SUPPLIER, doc, supplier);
 
     }
