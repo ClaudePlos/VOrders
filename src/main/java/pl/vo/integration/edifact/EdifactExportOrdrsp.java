@@ -49,7 +49,7 @@ import pl.vo.organisation.model.OrganisationUnit;
 
 /**
  *
- * @author k.skowronski
+ * @author k.skowronski (ClaudePlos)
  */
 public class EdifactExportOrdrsp {
     
