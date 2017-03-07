@@ -14,15 +14,25 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.themes.ValoTheme;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import pl.vendi.ui.VOLookup;
 import pl.vendi.ui.common.ComboBoxProducts;
 import pl.vendi.ui.documents.elements.DocumentWindow;
 import pl.vendi.ui.events.DocumentChangedEvent;
 import pl.vo.company.model.Company;
+import pl.vo.documents.DocumentsApi;
+import pl.vo.documents.api.PriceListsApi;
 import pl.vo.documents.model.Document;
 import pl.vo.documents.model.DocumentItem;
+import pl.vo.exceptions.VOWrongDataException;
+import pl.vo.products.api.UnitsProductsApi;
 import pl.vo.products.model.Product;
+import pl.vo.products.model.UnitsProducts;
 import pl.vo.road_distance.api.RoadDistanceApi;
 
 /**
@@ -30,11 +40,10 @@ import pl.vo.road_distance.api.RoadDistanceApi;
  * @author k.skowronski
  */
 public class ElZwdDocItemReplace extends HorizontalLayout {
-    
+
     BeanItemContainer<Product> cntProducts = new BeanItemContainer<Product>(Product.class);
     ComboBoxProducts cmbProduct = new ComboBoxProducts("Towar", cntProducts);
-    
-    
+       
     Document document;
     BeanItemContainer<DocumentItem> cntPositions;
 
@@ -141,11 +150,14 @@ public class ElZwdDocItemReplace extends HorizontalLayout {
             return;
         }
         DocumentItem di = new DocumentItem();
-
-        di.setProduct(cmbProduct.getProduct());
+        
+        di.setProduct( cmbProduct.getProduct() );
         di.setAmount(amount);
+            
 
         document.getItems().add(di);
+        
+        
         cntPositions.addItem(di);
 
         DocumentChangedEvent ev = new DocumentChangedEvent(document);
@@ -153,6 +165,10 @@ public class ElZwdDocItemReplace extends HorizontalLayout {
 
         parentWindow.setModified(true);
     }
+    
+    
+    
+    
     
     
     

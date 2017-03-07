@@ -28,6 +28,9 @@ public class DocumentsActionsZwdApi  extends DocumentActionBase  implements Seri
     
     @EJB
     SupplierIntegrationApi integrationApi; 
+    
+    @EJB
+    PriceListsApi priceListsApi;
 
     public Document runDocumentAction(Document doc, String action) throws VOWrongDataException 
     {
@@ -82,10 +85,13 @@ public class DocumentsActionsZwdApi  extends DocumentActionBase  implements Seri
           return doc;
      }
      
-      private Document actionSupplierConfirmAvailability ( Document doc) throws VOWrongDataException
+     private Document actionSupplierConfirmAvailability ( Document doc) throws VOWrongDataException
      {
-         
-         integrationApi.sendSupplierConfirmAvailability( doc );
+        // add ks -> wyceniam przed wysłaniem
+        priceListsApi.assignPricesInDocumentInSupplier(doc); 
+        documentsApi.recalculateDocument(doc);
+        
+        integrationApi.sendSupplierConfirmAvailability( doc );
          
          // change status
          doc.setStatus(VOConsts.DOC_STATUS_CONFIRMED_BY_SUPPLIER);
