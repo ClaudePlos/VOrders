@@ -87,7 +87,7 @@ public class DocumentsActionsZwdApi  extends DocumentActionBase  implements Seri
      
      private Document actionSupplierConfirmAvailability ( Document doc) throws VOWrongDataException
      {
-        // add ks -> wyceniam przed wysłaniem
+        // add ks -> wyceniam przed wysłaniem - a pozniej egifact
         priceListsApi.assignPricesInDocumentInSupplier(doc); 
         documentsApi.recalculateDocument(doc);
         
