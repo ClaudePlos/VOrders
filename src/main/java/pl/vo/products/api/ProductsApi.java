@@ -217,4 +217,33 @@ public class ProductsApi extends GenericDao<Product, Long>  implements Serializa
 
     }
      
+     
+     
+    public Product getByExternalCode(String indexNumber) throws VoNoResultException
+      {
+          // get 
+       String instance_code =  voSession.getLoggedUser().getInstanceCode();
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Product> cq = cb.createQuery(Product.class);
+        Root<Product> root = cq.from(Product.class);
+
+        Predicate eq =
+                cb.and(cb.equal(root.get("indexNumber"), cb.literal(indexNumber)),
+                        cb.equal(root.get("externalCode"), cb.literal(instance_code)));
+        cq.where(eq);
+        cq.select(root);
+        
+        try {
+            Product ret = (Product) em.createQuery(cq).getSingleResult();
+            return ret;
+        } catch (NoResultException nre) {
+            throw new VoNoResultException("Nie znaleziono towaru o indexNumber w externalCode:" + indexNumber);
+        }
+        catch( NonUniqueResultException nue)
+        {
+             throw new VoNoResultException("Znaleziono kilka towarów o indeksie o indexNumber:" + indexNumber);
+        }
+
+    } 
+     
 }

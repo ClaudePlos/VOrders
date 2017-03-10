@@ -6,6 +6,7 @@
 package pl.vo.integration.edifact;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
@@ -68,12 +69,24 @@ public class EdifactOrdrspImport implements Serializable {
     Document doc; 
     // parse edifact message and save document in database
     public Document parseAndProcess(Company cmpSeder, Company cmpRecipent, Ordrsp orders) throws VOWrongDataException {
+        
+        
+        this.doc = new Document();
+
+        // fill header
+        doc.setDateSend(new Date());
+        doc.setType(VOConsts.DOC_TYPE_DPZ);
+        doc.setStatus(VOConsts.DOC_STATUS_CONFIRMED_BY_SUPPLIER);
+        doc.setClient( companyApi.getByNip( VOConsts.NIP_VENDI ));
+        doc.setSupplier(  cmpRecipent );
+        
         // parse file
         Document orderDoc = parseOrdrsp(orders);
 
         // sprawdz zgodnosc z nadawca o odbiorca..
         // ustaw konteskt - bardzo wazne !!!
         orderDoc.setInstanceCode(cmpRecipent.getInstanceCode());
+        
 
         // recalculate
         documentsApi.recalculateDocument(orderDoc);
@@ -180,6 +193,7 @@ public class EdifactOrdrspImport implements Serializable {
     
     private void iparseDocumentItem(DocumentItem docItem, List<AdditionalProductId> prodIds, List<Quantity> quantities) throws VOWrongDataException
     {
+
         for (AdditionalProductId prodId : prodIds)
         {
 
@@ -208,12 +222,16 @@ public class EdifactOrdrspImport implements Serializable {
 //                    throw new VOWrongDataException("Nie udało się przetworzyć zamóienia - nieznany towar o indeksie:" + SupplierProductId);
                 }
                 try {
-                     prod = productsApi.getByIndex(buyerProductId);
+                     prod = productsApi.getByExternalCode(buyerProductId);
                      docItem.setProduct( prod );
                    
                 } catch (VoNoResultException nre) {
                     
                 }
+                
+                //ilosc zamawiana i ilosc potwierdzana 
+                docItem.setAmount(BigDecimal.ONE);
+                docItem.setAmountConfirmed(BigDecimal.ONE);
                 
             }
         }
