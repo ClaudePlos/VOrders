@@ -183,6 +183,8 @@ public class EdifactOrdrspImport implements Serializable {
                     docItem.setUnitPriceNet(sg30.getPriceDetails().getPriceInformation().getPrice());
                 }
             }
+            
+            
 
         }
 
@@ -229,9 +231,18 @@ public class EdifactOrdrspImport implements Serializable {
                     
                 }
                 
-                //ilosc zamawiana i ilosc potwierdzana 
-                docItem.setAmount(BigDecimal.ONE);
-                docItem.setAmountConfirmed(BigDecimal.ONE);
+                for ( Quantity q : quantities )
+                {
+                    if ( q.getQuantityDetails().getQuantityQualifier().equals("21") )
+                    {
+                       docItem.setAmount( q.getQuantityDetails().getQuantity() ); 
+                    }
+                    
+                    if ( q.getQuantityDetails().getQuantityQualifier().equals("113") )
+                    {
+                        docItem.setAmountConfirmed( q.getQuantityDetails().getQuantity() ); 
+                    }
+                }
                 
             }
         }
