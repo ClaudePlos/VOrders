@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import pl.vo.VOConsts;
 import pl.vo.documents.model.Document;
 import pl.vo.exceptions.VOWrongDataException;
 import pl.vo.integration.edifact.EdifactExport;
@@ -31,6 +32,8 @@ public class IntegrationEdifactApi {
 
         EdifactExport ediOrderExport = new EdifactExport();
 
+        doc.setStatus( VOConsts.DOC_STATUS_SENDED_TO_SUPPLIER );
+        
         ret = ediOrderExport.generate(doc);
 
         return ret;

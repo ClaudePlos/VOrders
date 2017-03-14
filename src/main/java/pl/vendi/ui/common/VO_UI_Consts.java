@@ -44,7 +44,7 @@ public class VO_UI_Consts {
     public static DictionaryValue actionAccept = new DictionaryValue(VOConsts.ACTION_ACCEPT, "Zatwierdź");
     public static DictionaryValue actionConfirmAvailability = new DictionaryValue(VOConsts.ACTION_ACCEPT_AVAILABILITY, "Potwierdź dostępność");
     public static DictionaryValue actionCancel = new DictionaryValue(VOConsts.ACTION_CANCEL, "Anuluj");
-    public static DictionaryValue actionSendToRealization = new DictionaryValue(VOConsts.ACTION_SEND_TO_REALIZATION, "Przekaż do realizacji");
+    public static DictionaryValue actionSendToRealization = new DictionaryValue(VOConsts.ACTION_SEND_TO_REALIZATION, "Przekaż do realizacji"); //Generuje ZWD do ZWK
     public static DictionaryValue actionBackToOpen = new DictionaryValue(VOConsts.ACTION_BACK_TO_OPEN, "Wróc do edycji");
     public static DictionaryValue actionCancelRealization = new DictionaryValue(VOConsts.ACTION_CANCEL_REALIZATION, "Wycofaj z realizacji (UWAGA!)");
 

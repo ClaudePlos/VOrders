@@ -51,9 +51,9 @@ public class VOConsts {
     public static String DOC_STATUS_REALIZED = "REALIZED";
     
     /// sended to supplier - awaiting confirmation
-    public static String DOC_STATUS_SENDED_TO_SUPPLIER = "SENDED_TO_SUPPLIER";
-    public static String DOC_STATUS_RECEIVED_BY_SUPPLIER = "RECEIVED_BY_SUPPLIER";
-     public static String DOC_STATUS_CONFIRMED_BY_SUPPLIER = "CONFIRMED_SUPPLIER";
+    public static String DOC_STATUS_SENDED_TO_SUPPLIER = "SENDED_TO_SUPPLIER"; // wysklany do dostawcy
+    public static String DOC_STATUS_RECEIVED_BY_SUPPLIER = "RECEIVED_BY_SUPPLIER"; // odebrany przez dostawcę 
+     public static String DOC_STATUS_CONFIRMED_BY_SUPPLIER = "CONFIRMED_SUPPLIER"; // potwierdzony przez dostawcę 
   
     
      public static String DOC_STATUS_BOOKED = "BOOKED";
