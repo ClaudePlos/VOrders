@@ -312,7 +312,7 @@ public class EdifactOrderImport implements Serializable {
                 String buyerProductId = prodId.getItemNumberIdentification1().getItemNumber();
                  Product prod = null ;
                 try {
-                     prod = productsApi.getByCmpIndex(buyerProductId, this.doc.getSupplier().getId());
+                      prod = productsApi.getByCmpIndex(buyerProductId, this.doc.getSupplier().getId());
                       docItem.setProduct( prod );
                    
                 } catch (VoNoResultException nre) {
@@ -376,6 +376,11 @@ public class EdifactOrderImport implements Serializable {
 
             for (org.milyn.edi.unedifact.d96a.common.ItemDescription itd : sg25.getItemDescription()) {
                 itemDescriptionText = itd.getItemDescription().getItemDescription1();
+            }
+            
+            if ( this.doc == null )
+            {
+                this.doc = orderDoc;
             }
 
             iparseDocumentItem(docItem, sg25.getAdditionalProductId(), sg25.getQuantity());

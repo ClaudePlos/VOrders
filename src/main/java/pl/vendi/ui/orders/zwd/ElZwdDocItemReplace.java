@@ -82,7 +82,7 @@ public class ElZwdDocItemReplace extends HorizontalLayout {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                addItem();
+                addItemReplacement();
             }
         });
         
@@ -166,6 +166,50 @@ public class ElZwdDocItemReplace extends HorizontalLayout {
         parentWindow.setModified(true);
     }
     
+    
+    
+    private void addItemReplacement() {  // dodaj zamiennik
+
+        BigDecimal amount = null;
+
+        if (cmbProduct.getProduct() == null) {
+            return;
+        }
+        if (document == null) {
+            Notification.show("Brak dokumentu!", Notification.Type.ERROR_MESSAGE);
+            return;
+        }
+        try {
+            amount = new BigDecimal(tfAmountZam.getValue().replace(",", "."));
+        } catch (NumberFormatException nfe) {
+            Notification.show("Błędny format ilości", Notification.Type.ERROR_MESSAGE);
+            return;
+        }
+        
+        
+        
+        // sprawdz czy nie ma juz tej pozycji towarowej
+        if (document.hasItemWithProduct(cmbProduct.getProduct())) {
+            Notification.show("Dokument zawiera już pozycję z towarem:" + cmbProduct.getProduct());
+            return;
+        }
+        DocumentItem di = new DocumentItem();
+        
+        di.setProduct( cmbProduct.getProduct() );
+        di.setAmount( BigDecimal.ZERO );
+        di.setAmountConfirmed(amount);
+            
+
+        document.getItems().add(di);
+        
+        
+        cntPositions.addItem(di);
+
+        DocumentChangedEvent ev = new DocumentChangedEvent(document);
+        eventBus.post(ev);
+
+        parentWindow.setModified(true);
+    }
     
     
     
