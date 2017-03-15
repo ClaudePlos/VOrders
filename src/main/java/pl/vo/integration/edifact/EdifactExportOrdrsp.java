@@ -59,7 +59,7 @@ public class EdifactExportOrdrsp {
     UNEdifactInterchange41 interchange;
     UNEdifactMessage41 message;
     
-    String messageType = "";
+    String messageType = "ORDRSP";
     
     Date messageCreationDate = new Date();
     Long ti = new Long(messageCreationDate.getTime());
