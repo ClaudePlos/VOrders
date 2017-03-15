@@ -75,7 +75,7 @@ public class EdifactOrdrspImport implements Serializable {
 
         // fill header
         doc.setDateSend(new Date());
-        doc.setType(VOConsts.DOC_TYPE_DPZ);
+        doc.setType(VOConsts.DOC_TYPE_ZWD);
         doc.setStatus(VOConsts.DOC_STATUS_CONFIRMED_BY_SUPPLIER);
         doc.setClient( companyApi.getByNip( VOConsts.NIP_VENDI ));
         doc.setSupplier(  cmpRecipent );
@@ -150,7 +150,7 @@ public class EdifactOrdrspImport implements Serializable {
         // fill header
         orderDoc.setDateSend(new Date());
         orderDoc.setType(VOConsts.DOC_TYPE_ZWD);
-        orderDoc.setStatus(VOConsts.DOC_STATUS_RECEIVED_BY_SUPPLIER);
+        orderDoc.setStatus(VOConsts.DOC_STATUS_CONFIRMED_BY_SUPPLIER);
 
         iParseBOM(orderDoc, orders.getBeginningOfMessage());
 

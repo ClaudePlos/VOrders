@@ -94,8 +94,9 @@ public class EdifactExport {
         
         // dodalem document.getStatus().equals(VOConsts.DOC_STATUS_ACCEPTED) bo jak jest ZWD po stronie dostawcy
         // i chcemy to ZWD odesłać z potwierdzeniem ilosci lub zamienników to generujemy ORDERSP 
-        if (document.getType().equals(VOConsts.DOC_TYPE_ZWD) && document.getStatus().equals(VOConsts.DOC_STATUS_SENDED_TO_SUPPLIER)) {
+        if (document.getType().equals(VOConsts.DOC_TYPE_ZWD) && document.getStatus().equals(VOConsts.DOC_STATUS_ACCEPTED)) {
             messageType = "ORDERS";
+            document.setStatus(VOConsts.DOC_STATUS_SENDED_TO_SUPPLIER);
             generateZwd();
         }
         

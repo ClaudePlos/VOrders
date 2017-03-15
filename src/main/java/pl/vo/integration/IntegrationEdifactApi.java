@@ -31,8 +31,6 @@ public class IntegrationEdifactApi {
         logger.fine("createSendOrderToSupplier");
 
         EdifactExport ediOrderExport = new EdifactExport();
-
-        doc.setStatus( VOConsts.DOC_STATUS_SENDED_TO_SUPPLIER );
         
         ret = ediOrderExport.generate(doc);
 
