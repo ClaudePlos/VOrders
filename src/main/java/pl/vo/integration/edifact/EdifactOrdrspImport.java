@@ -93,6 +93,11 @@ public class EdifactOrdrspImport implements Serializable {
         // create number
         numerationApi.fillNumerIfNotExists(orderDoc);
         //
+        
+        // pobrać id zamówienia i pozycji tak aby nie było insert tylko update   
+        documentsApi.checkIdDocAndIdItems(orderDoc);
+        System.out.print( orderDoc.getId().toString() );
+        
         orderDoc = documentsApi.save(orderDoc);
         return orderDoc;
         // 

@@ -16,6 +16,7 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateful;
 import javax.ejb.Stateless;
 import javax.enterprise.context.SessionScoped;
+import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
@@ -29,6 +30,7 @@ import pl.vo.common.VoUserSession;
 import pl.vo.documents.model.Document;
 import pl.vo.documents.model.DocumentItem;
 import pl.vo.exceptions.VOWrongDataException;
+import pl.vo.exceptions.VoNoResultException;
 import pl.vo.security.model.User;
 import pl.vo.security.model.UsersCompanyUnits;
 import pl.vo.utils.VOUtils;
@@ -62,6 +64,8 @@ public class DocumentsApi extends GenericDao<Document, Long> implements Serializ
         
         return ret;
     }
+    
+    
 
     public List<Document> findDocuments(String[] types, Long orgUnitId, Long supplId, Date month, String username) {
         List<Predicate> predicates = new ArrayList<Predicate>();
@@ -234,6 +238,36 @@ public class DocumentsApi extends GenericDao<Document, Long> implements Serializ
         
         ndoc   = this.save( ndoc );
         return ndoc; 
+    }
+    
+    
+    public void checkIdDocAndIdItems(Document doc) throws VOWrongDataException
+    {             
+        doc.setId( getIdDocumentForOwnNumberAndData( doc.getExternalNumber(), doc.getDateDelivery() ) );
+        
+        //for ()
+        
+    }
+    
+    
+    public Long getIdDocumentForOwnNumberAndData(String externalNumber, Date dateDelivery) throws VoNoResultException {
+        
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Document> cq = cb.createQuery(classType);
+        Root<Document> root = cq.from(classType);
+        
+        Predicate eq = cb.and( cb.equal(root.get("ownNumber"), cb.literal(externalNumber)),
+                               cb.equal(root.get("dateDelivery"), cb.literal(dateDelivery))
+                                );
+        cq.where(eq);
+        cq.select(root);
+        
+        try {
+            Document ret = (Document) em.createQuery(cq).getSingleResult();
+            return ret.getId();
+        } catch (NoResultException nre) {
+            return null;
+        }
     }
 
 }
