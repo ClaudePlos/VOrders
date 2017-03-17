@@ -129,7 +129,7 @@ public class VOIntegrationSender implements Serializable {
             try {
             VoRestResponse resp = gson.fromJson(jsonLine, VoRestResponse.class) ;
               Notification.show("Wysłane poprawnie! Numer dokumentu u dostawcy: " + resp.getDocNumber() 
-                      + " dokId: " + resp.getDocId() , Notification.Type.WARNING_MESSAGE);
+                      + " -dokId: " + resp.getDocId() , Notification.Type.WARNING_MESSAGE);
             return resp;
             }
             catch (Exception e){ 
