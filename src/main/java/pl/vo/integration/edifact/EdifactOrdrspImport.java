@@ -87,15 +87,18 @@ public class EdifactOrdrspImport implements Serializable {
         // ustaw konteskt - bardzo wazne !!!
         orderDoc.setInstanceCode(cmpRecipent.getInstanceCode());
         
+        
+        // pobrać id zamówienia i pozycji tak aby nie było insert tylko update
+        // pobieram tez numer exp 
+        documentsApi.checkIdDocAndIdItems(orderDoc);
 
         // recalculate
-        documentsApi.recalculateDocument(orderDoc);
-        // create number
+        documentsApi.recalculateDocumentConfirmed(orderDoc);
+        // create number // ks numer jest juz nadany
         numerationApi.fillNumerIfNotExists(orderDoc);
         //
         
-        // pobrać id zamówienia i pozycji tak aby nie było insert tylko update   
-        documentsApi.checkIdDocAndIdItems(orderDoc);
+        
         
         orderDoc = documentsApi.save(orderDoc);
         return orderDoc;

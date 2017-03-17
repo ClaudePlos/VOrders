@@ -196,6 +196,43 @@ public class DocumentsApi extends GenericDao<Document, Long> implements Serializ
         doc.setValueTax(sumTax);
 
     }
+    
+    
+    // recalculateDocument / Confirm
+    public void recalculateDocumentConfirmed(Document doc) throws VOWrongDataException {
+
+        BigDecimal sumNet = new BigDecimal(0);
+        BigDecimal sumTax = new BigDecimal(0);
+        BigDecimal sumBrut = new BigDecimal(0);
+
+        for (DocumentItem item : doc.getItems()) {
+
+            if (item.getAmountConfirmed()== null) {
+                throw new VOWrongDataException("Błąd w dokumencie - pozycja dla towaru:" + item.getProduct().getAbbr() + " nie ma ilości POTWIERDZONYCH");
+            }
+
+            if (item.getUnitPriceNet() == null) {
+                throw new VOWrongDataException("Błąd w dokumencie -towar:" + item.getProduct().getAbbr() + " nie ma cemy");
+            }
+
+            BigDecimal net = item.getUnitPriceNet().multiply(new BigDecimal(item.getAmountConfirmed().intValue()));
+            item.setValueNet(net);
+            // 
+            BigDecimal tax = net.multiply(item.getProduct().getTaxRate()).setScale(2);
+            tax = tax.divide(new BigDecimal(100),RoundingMode.HALF_UP).setScale(2);
+            item.setValueTax(tax);
+            item.setValueBrut(net.add(tax));
+
+            sumNet = sumNet.add(net);
+            sumTax = sumTax.add(tax);
+            sumBrut = sumBrut.add(item.getValueBrut());
+        }
+
+        doc.setValueNet(sumNet);
+        doc.setValueBrut(sumBrut);
+        doc.setValueTax(sumTax);
+
+    }
 
     // adds user permistion predicate
     public void addPermistionPredicates( List<Predicate> predicates, CriteriaBuilder cb,CriteriaQuery cq,  Path<Document> path) {
@@ -248,6 +285,7 @@ public class DocumentsApi extends GenericDao<Document, Long> implements Serializ
     {
         Document docInOrder = getDocumentForOwnNumberAndData( doc.getExternalNumber(), doc.getDateDelivery() );
         doc.setId(  docInOrder.getId() );
+        doc.setOwnNumber( docInOrder.getExternalNumber() );
         
         for ( DocumentItem itemOrder : docInOrder.getItems() )
         {
