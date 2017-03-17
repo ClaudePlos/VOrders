@@ -74,6 +74,7 @@ public class DocumentsApi extends GenericDao<Document, Long> implements Serializ
         CriteriaQuery<Document> cq = cb.createQuery(classType);
         Root<Document> root = cq.from(classType);
         cq.select(root);
+        
         // type 
         predicates.add(root.get("type").in(types));
         if (orgUnitId != null) {
@@ -86,6 +87,8 @@ public class DocumentsApi extends GenericDao<Document, Long> implements Serializ
         if (month != null) {
             predicates.add(cb.between(root.<Date>get("dateOperation"), cb.literal(VOUtils.firstDayOfMonth(month)), cb.literal(VOUtils.lastDayOfMonth(month))));
         }
+        
+        cq.orderBy( cb.desc(root.get("dateOperation")) ); // ks add sort 
 
         // apply permistions 
         addPermistionPredicates( predicates, cb, cq, root);

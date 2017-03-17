@@ -242,8 +242,8 @@ public class DocumentItemsTable extends Table {
 
                 Label lab = new Label();
                 DocumentItem di = (DocumentItem) itemId;
-                if (di != null && di.getAmount() != null) {
-                    lab.setValue( VOUtils.formatCurrency( di.getAmount() ) );
+                if (di != null && di.getAmountConfirmed() != null) {
+                    lab.setValue( VOUtils.formatCurrency( di.getAmountConfirmed() ) );
                     lab.setWidth("100%");
                     lab.addStyleName( "labelRight");
                 } else {

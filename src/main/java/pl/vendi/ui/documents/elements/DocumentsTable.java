@@ -197,6 +197,9 @@ public class DocumentsTable extends VerticalLayout implements Property.ValueChan
                 }
             }
         });
+        
+        
+    
 
         initColumns();
     }

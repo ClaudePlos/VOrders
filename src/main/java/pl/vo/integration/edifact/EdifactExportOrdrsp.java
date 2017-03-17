@@ -86,11 +86,13 @@ public class EdifactExportOrdrsp {
 
         // order number 
         BeginningOfMessage bgm = new BeginningOfMessage();
-        bgm.setDocumentMessageNumber(document.getOwnNumber());
+        bgm.setDocumentMessageNumber(document.getExternalNumber()); // ks zamieniam z own number aby update zrobic u zamawiającego
         orderMsg.setBeginningOfMessage(bgm);
 
         bgm.setDocumentMessageName(new DocumentMessageNameC002());
         bgm.getDocumentMessageName().setDocumentMessageNameCoded("220");
+        
+        
 
         orderMsg.setDateTimePeriod(new ArrayList<DateTimePeriod>());
         insertDateTime(orderMsg.getDateTimePeriod());
