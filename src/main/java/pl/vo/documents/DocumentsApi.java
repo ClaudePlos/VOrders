@@ -245,15 +245,25 @@ public class DocumentsApi extends GenericDao<Document, Long> implements Serializ
     
     
     public void checkIdDocAndIdItems(Document doc) throws VOWrongDataException
-    {             
-        doc.setId( getIdDocumentForOwnNumberAndData( doc.getExternalNumber(), doc.getDateDelivery() ) );
+    {
+        Document docInOrder = getDocumentForOwnNumberAndData( doc.getExternalNumber(), doc.getDateDelivery() );
+        doc.setId(  docInOrder.getId() );
         
-        //for ()
+        for ( DocumentItem itemOrder : docInOrder.getItems() )
+        {
+            for ( DocumentItem item : doc.getItems() )
+            {
+                if ( item.getProduct().getExternalCode().equals( itemOrder.getProduct().getExternalCode() ))
+                {
+                    item.setId( itemOrder.getId() );
+                }
+            }
+        }
         
     }
     
     
-    public Long getIdDocumentForOwnNumberAndData(String externalNumber, Date dateDelivery) throws VoNoResultException {
+    public Document getDocumentForOwnNumberAndData(String externalNumber, Date dateDelivery) throws VoNoResultException {
         
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Document> cq = cb.createQuery(classType);
@@ -267,10 +277,13 @@ public class DocumentsApi extends GenericDao<Document, Long> implements Serializ
         
         try {
             Document ret = (Document) em.createQuery(cq).getSingleResult();
-            return ret.getId();
+            return ret;
         } catch (NoResultException nre) {
             return null;
         }
     }
+    
+    
+    
 
 }
