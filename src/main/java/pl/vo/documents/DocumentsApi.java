@@ -285,7 +285,7 @@ public class DocumentsApi extends GenericDao<Document, Long> implements Serializ
     {
         Document docInOrder = getDocumentForOwnNumberAndData( doc.getExternalNumber(), doc.getDateDelivery() );
         doc.setId(  docInOrder.getId() );
-        doc.setOwnNumber( docInOrder.getExternalNumber() );
+        doc.setOwnNumber( docInOrder.getOwnNumber() );
         
         for ( DocumentItem itemOrder : docInOrder.getItems() )
         {
