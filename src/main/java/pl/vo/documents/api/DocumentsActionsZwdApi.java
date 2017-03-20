@@ -89,7 +89,7 @@ public class DocumentsActionsZwdApi  extends DocumentActionBase  implements Seri
      {
         // add ks -> wyceniam przed wysłaniem - a pozniej egifact
         priceListsApi.assignPricesInDocumentInSupplier(doc); 
-        documentsApi.recalculateDocument(doc);
+        documentsApi.recalculateDocumentConfirmed(doc);
         
         integrationApi.sendSupplierConfirmAvailability( doc );
          
