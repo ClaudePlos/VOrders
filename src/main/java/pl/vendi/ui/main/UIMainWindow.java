@@ -25,6 +25,7 @@ import pl.vendi.ui.config.users.WndConfigUsers;
 import pl.vendi.ui.delivery.pz.WndDpzs;
 import pl.vendi.ui.delivery.pz.WndPz;
 import pl.vendi.ui.delivery.pz.WndPzs;
+import pl.vendi.ui.finacialStock.FinancialStock;
 import pl.vendi.ui.invoice.WndInvoices;
 import pl.vendi.ui.orders.zwk.WndOrderZwk;
 import pl.vendi.ui.orders.zwk.WndOrdersZwk;
@@ -63,6 +64,8 @@ public class UIMainWindow extends VerticalLayout {
     private static String MENU_ADD_PZ = "Dodaj dostawę";
 
     private static String MENU_STOCK = "Stany magazynowe";
+    
+    private static String MENU_FINANCIAL_STOCK = "Stany finansowe";
     
     // invoices
     private static String MENU_INVOICES = "Faktury";
@@ -140,6 +143,9 @@ public class UIMainWindow extends VerticalLayout {
         }
 
         menu.addItem(MENU_STOCK, menuCommand);
+        
+        
+        menu.addItem(MENU_FINANCIAL_STOCK, menuCommand);
 
         this.addComponent(hboxTop);
         hboxTop.addComponent(menu);
@@ -209,6 +215,8 @@ public class UIMainWindow extends VerticalLayout {
             newW = new WndPzs();
         } else if (selectedItem.getText().equals(MENU_STOCK)) {
             newW = new WndStock();
+        } else if (selectedItem.getText().equals(MENU_FINANCIAL_STOCK)) {
+            newW = new FinancialStock();
         }
         else if ( selectedItem.getText().equals(MENU_INVOICES)){
             newW = new WndInvoices();

@@ -6,7 +6,6 @@
 package pl.vo.common;
 
 import java.util.Date;
-import pl.vo.security.model.User;
 
 /**
  *
