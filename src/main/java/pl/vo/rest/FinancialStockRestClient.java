@@ -37,11 +37,11 @@ public class FinancialStockRestClient {
     }
 
     ///rest/monitor/1/2017
-    public String getFinancialStock(){
+    public String getFinancialStock( String nip, String rok){
             String response = target.path("rest").
                             path("monitor").
-                            path("1").
-                            path("2017").
+                            path(nip).
+                            path(rok).
                             request().
                             accept(MediaType.APPLICATION_JSON).
                             get(String.class);
