@@ -28,8 +28,11 @@ import com.vaadin.ui.Table;
 import com.vaadin.ui.themes.ChameleonTheme;
 import java.util.ArrayList;
 import java.util.List;
+import pl.vendi.ui.VOLookup;
 import pl.vendi.ui.common.ComboBoxCompany;
 import pl.vendi.ui.finacialStock.model.DocItemDTO;
+import pl.vo.company.model.Company;
+import pl.vo.security.model.User;
 
 /**
  *
@@ -40,12 +43,20 @@ public class FinancialStock extends Window implements Button.ClickListener {
     VerticalLayout vboxMain = new VerticalLayout();
     HorizontalLayout hboxAdd = new HorizontalLayout();
     
+    Company companyZalogowane;
+    
     ComboBoxCompany cmbCompany = new ComboBoxCompany("Kontrahent");
+    ComboBox cmbCompany2 = new ComboBox("Kontrahent");
     ComboBox cmbRok = new ComboBox("Rok");
     Button butGetData = new Button("Pobierz dane");
     
     FinancialStockRestClient restClient = new FinancialStockRestClient();
+    
+    String instanceCode = VOLookup.lookupVoUserSession().getLoggedUser().getInstanceCode();
+    User loggedUser = VOLookup.lookupVoUserSession().getLoggedUser();
+    
 
+    BeanItemContainer<Company> listCompanies = new BeanItemContainer<Company>(Company.class); 
 
 public FinancialStock() {
         
@@ -62,12 +73,44 @@ public FinancialStock() {
 
         //hboxAdd.setWidth("100%");
         
-        hboxAdd.addComponent(cmbCompany);
+        cmbCompany2.setContainerDataSource( listCompanies );
+        cmbCompany2.setItemCaptionPropertyId("name");
+      //  cmbCompany2.setItemCaption(Company, Company.getName );
+        hboxAdd.addComponent(cmbCompany2);
+        
+        if ( instanceCode.equals("VENDI") )
+        {
+            companyZalogowane = loggedUser.getCompany();
+            
+            for ( Company c : cmbCompany.cntUnits.getItemIds() )
+            {
+                if ( !c.getNip().equals("5222899038") )
+                {
+                    listCompanies.addItem( c );
+                }
+            }
+        }
+        else if ( instanceCode.equals("MEGAFRUIT") )
+        {
+            companyZalogowane = loggedUser.getCompany();
+            
+            for ( Company c : cmbCompany.cntUnits.getItemIds() )
+            {
+                if ( c.getNip().equals("5222899038") )
+                {
+                    listCompanies.addItem( c );
+                }
+            }
+        }
+        
+        
         cmbRok.addItem("2016");
         cmbRok.addItem("2017");
         cmbRok.addItem("2018");
         cmbRok.setValue("2017");
         hboxAdd.addComponent(cmbRok);
+        
+        
         butGetData.setIcon( FontAwesome.REFRESH );
         hboxAdd.addComponent(butGetData);
         
@@ -98,9 +141,11 @@ public FinancialStock() {
             public void buttonClick(Button.ClickEvent event) {
                 
             grid.removeAllItems();
-
+            
+            
+            Company selectC =  (Company) cmbCompany2.getValue();
                 
-            String json = restClient.getFinancialStock( cmbCompany.getValueCompany().getNip(), cmbRok.getValue().toString() );
+            String json = restClient.getFinancialStock( selectC.getNip() , cmbRok.getValue().toString() );
             JsonParser parser = new JsonParser();
 
             try {
