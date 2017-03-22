@@ -30,7 +30,7 @@ public class FinancialStockRestClient {
         //query params: ?q=Turku&cnt=10&mode=json&units=metric
         //i2.naprzod.pl
         //localhost:40884
-        target = client.target("http://i2.naprzod.pl/VOrdersEgeria")
+        target = client.target("https://i2.naprzod.pl/VOrdersEgeria")
            //.queryParam("cnt", "10")
            //.queryParam("mode", "json")
            //.queryParam("units", "metric")

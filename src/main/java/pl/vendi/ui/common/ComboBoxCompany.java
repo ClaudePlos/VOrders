@@ -21,7 +21,7 @@ import pl.vo.security.model.User;
 public class ComboBoxCompany  extends ComboBox
 {
     
-    public BeanItemContainer<Company> cntUnits = new BeanItemContainer<Company>(Company.class);
+    BeanItemContainer<Company> cntUnits = new BeanItemContainer<Company>(Company.class);
     
     
     

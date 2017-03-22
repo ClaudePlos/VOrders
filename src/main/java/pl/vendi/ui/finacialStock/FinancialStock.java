@@ -47,7 +47,6 @@ public class FinancialStock extends Window implements Button.ClickListener {
     
     Company companyZalogowane;
     
-    ComboBoxCompany cmbCompany = new ComboBoxCompany("Kontrahent");
     ComboBox cmbCompany2 = new ComboBox("Kontrahent");
     ComboBox cmbRok = new ComboBox("Rok");
     Button butGetData = new Button("Pobierz dane");
@@ -59,6 +58,7 @@ public class FinancialStock extends Window implements Button.ClickListener {
     
 
     BeanItemContainer<Company> listCompanies = new BeanItemContainer<Company>(Company.class); 
+    BeanItemContainer<Company> listCompaniesView = new BeanItemContainer<Company>(Company.class); 
 
 public FinancialStock() {
         
@@ -67,7 +67,7 @@ public FinancialStock() {
         vboxMain.setSpacing( true );
         vboxMain.setMargin( true );
         
-        
+        listCompanies.addAll( VOLookup.lookupCompanysApi().findAll( ) );
  
         hboxAdd.setSpacing(true); // Compact layout
         
@@ -75,7 +75,7 @@ public FinancialStock() {
 
         //hboxAdd.setWidth("100%");
         
-        cmbCompany2.setContainerDataSource( listCompanies );
+        cmbCompany2.setContainerDataSource( listCompaniesView );
         cmbCompany2.setItemCaptionPropertyId("name");
       //  cmbCompany2.setItemCaption(Company, Company.getName );
         hboxAdd.addComponent(cmbCompany2);
@@ -84,11 +84,11 @@ public FinancialStock() {
         {
             companyZalogowane = loggedUser.getCompany();
             
-            for ( Company c : cmbCompany.cntUnits.getItemIds() )
+            for ( Company c : listCompanies.getItemIds() )
             {
                 if ( !c.getNip().equals("5222899038") )
                 {
-                    listCompanies.addItem( c );
+                    listCompaniesView.addItem( c );
                 }
             }
         }
@@ -96,11 +96,11 @@ public FinancialStock() {
         {
             companyZalogowane = loggedUser.getCompany();
             
-            for ( Company c : cmbCompany.cntUnits.getItemIds() )
+            for ( Company c : listCompanies.getItemIds() )
             {
                 if ( c.getNip().equals("5222899038") )
                 {
-                    listCompanies.addItem( c );
+                    listCompaniesView.addItem( c );
                 }
             }
         }
