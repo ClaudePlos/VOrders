@@ -27,7 +27,9 @@ public class FinancialStockRestClient {
     public FinancialStockRestClient() {
         client = ClientBuilder.newClient();
         //query params: ?q=Turku&cnt=10&mode=json&units=metric
-        target = client.target("http://localhost:40884/VOrdersEgeria")
+        //i2.naprzod.pl
+        //localhost:40884
+        target = client.target("http://i2.naprzod.pl/VOrdersEgeria")
            //.queryParam("cnt", "10")
            //.queryParam("mode", "json")
            //.queryParam("units", "metric")
