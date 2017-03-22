@@ -20,6 +20,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.JsonArray;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Sizeable;
 import com.vaadin.ui.Alignment;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import pl.vendi.ui.VOLookup;
 import pl.vendi.ui.common.ComboBoxCompany;
+import pl.vendi.ui.finacialStock.model.DocDTO;
 import pl.vendi.ui.finacialStock.model.DocItemDTO;
 import pl.vo.company.model.Company;
 import pl.vo.security.model.User;
@@ -119,7 +121,7 @@ public FinancialStock() {
         hboxAdd.setDefaultComponentAlignment(Alignment.BOTTOM_RIGHT);
         vboxMain.addComponent(hboxAdd);
         
-         Table grid = new Table();
+        Table grid = new Table(); ///rozrachunki
         grid.setStyleName("iso3166");
         grid.setPageLength(7);
         grid.setSizeFull();
@@ -129,23 +131,49 @@ public FinancialStock() {
         grid.setColumnReorderingAllowed(true);
         grid.setColumnCollapsingAllowed(true);
 
-        grid.setWidth("100%");
+        grid.setWidth("98%");
         grid.setHeight("100%");
         vboxMain.addComponent(grid);
-        
         vboxMain.setExpandRatio(grid, 1);
+        
+        
+        Table gridDok = new Table(); // dokumenty
+        gridDok.setStyleName("iso3166");
+        gridDok.setPageLength(7);
+        gridDok.setSizeFull();
+        gridDok.setSelectable(true);
+        gridDok.setMultiSelect(false);
+        gridDok.setImmediate(true);
+        gridDok.setColumnReorderingAllowed(true);
+        gridDok.setColumnCollapsingAllowed(true);
+
+        gridDok.setWidth("98%");
+        gridDok.setHeight("100%");
+        vboxMain.addComponent(gridDok);
+        vboxMain.setExpandRatio(gridDok, 1);
+        
         
         butGetData.addClickListener( new Button.ClickListener() {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 
+            gridDok.removeAllItems();
             grid.removeAllItems();
             
             
             Company selectC =  (Company) cmbCompany2.getValue();
                 
-            String json = restClient.getFinancialStock( selectC.getNip() , cmbRok.getValue().toString() );
+            String json = null;
+                if ( instanceCode.equals("VENDI") )
+                {
+                    json = restClient.getFinancialStock( selectC.getNip() , cmbRok.getValue().toString() );
+                }
+                else
+                {
+                   json = restClient.getFinancialStock( companyZalogowane.getNip() , cmbRok.getValue().toString() );
+                }
+            
             JsonParser parser = new JsonParser();
 
             try {
@@ -166,6 +194,8 @@ public FinancialStock() {
                         dI.setSaldo(row.get("saldo").getAsBigDecimal() );
                         dI.setRozliczony(row.get("rozliczony").getAsString() );
                         dI.setRozliczonyNaDzis(row.get("rozliczonyNaDzis").getAsString() );
+                        dI.setOkres(row.get("okres").getAsString() );
+                        dI.setRozId(row.get("rozId").getAsBigDecimal() );
 
                        listDocItem.add(dI);
                     }
@@ -177,8 +207,7 @@ public FinancialStock() {
                      grid.setContainerDataSource( dataSource );
                      grid.setColumnReorderingAllowed(true);
                      //grid.setColumnHeaders(  new String[] {"rozNumer", "rozTyp", "wn", "ma", "saldo", "rozliczony", "rozliczonyNaDzis"} );
-                     grid.setVisibleColumns( new Object[] {"rozNumer", "rozTyp", "wn", "ma", "saldo", "rozliczony", "rozliczonyNaDzis"} );
-                     grid.setWidth("98%");
+                     grid.setVisibleColumns( new Object[] {"rozNumer", "rozTyp", "wn", "ma", "saldo", "rozliczony", "rozliczonyNaDzis","okres"} );
                      grid.addStyleName(ChameleonTheme.TABLE_STRIPED);
 
                 } catch (JsonSyntaxException e) {
@@ -190,7 +219,64 @@ public FinancialStock() {
         });
         
 
-       
+        
+        grid.addItemClickListener(new ItemClickEvent.ItemClickListener() {
+            @Override
+            public void itemClick(ItemClickEvent itemClickEvent) {
+                
+                gridDok.removeAllItems();
+                
+                System.out.println(itemClickEvent.getItemId().toString());
+                
+                DocItemDTO item = (DocItemDTO) itemClickEvent.getItemId();
+                
+                String jsonDoc = null;
+                jsonDoc = restClient.getDocFinancialStock( item.getRozId() );
+                
+                JsonParser parser = new JsonParser();
+                
+                JsonElement parsedJsonData = parser.parse(jsonDoc);
+                JsonArray jA = parsedJsonData.getAsJsonArray();
+
+                    List<DocDTO> listDoc = new ArrayList<DocDTO>();
+
+                    for (int i = 0; i < jA.size(); i++) {
+
+                        JsonObject row = jA.get(i).getAsJsonObject();
+
+                        DocDTO dI =  new DocDTO();
+                        dI.setNumerWlasny(row.get("numerWlasny").getAsString() );
+                        if ( row.get("numerObcy") != null )
+                            dI.setNumerObcy(row.get("numerObcy").getAsString() ); 
+                        
+                        dI.setDataWystawienia(row.get("dataWystawienia").getAsString() );
+                        dI.setDataZaksiegowania(row.get("dataZaksiegowania").getAsString() );
+                        if ( row.get("dataWymagalnosci") != null )
+                            dI.setDataWymagalnosci(row.get("dataWymagalnosci").getAsString() );
+                        
+                        dI.setZaplata(row.get("zaplata").getAsString() );
+                        dI.setRozliczona(row.get("rozliczona").getAsString() );
+                        
+                        dI.setDokOpis(row.get("dokOpis").getAsString() );
+                        dI.setPlOpis(row.get("plOpis").getAsString() );
+
+                        dI.setWn(row.get("wn").getAsBigDecimal() );
+                        dI.setMa(row.get("ma").getAsBigDecimal() );
+      
+
+                       listDoc.add(dI);
+                    }
+                
+                BeanItemContainer<DocDTO> dataSourceDoc = new BeanItemContainer<DocDTO>(DocDTO.class);
+                    dataSourceDoc.addAll(listDoc);
+                     gridDok.setContainerDataSource( dataSourceDoc );
+                     gridDok.setColumnReorderingAllowed(true);                    
+            
+                gridDok.setVisibleColumns( new Object[] {"numerWlasny", "numerObcy", "dataWystawienia", "dataZaksiegowania", "dataWymagalnosci"
+                        , "zaplata", "rozliczona","dokOpis","plOpis","wn","ma"} );
+                gridDok.addStyleName(ChameleonTheme.TABLE_STRIPED);
+            }
+        });
 
         
         

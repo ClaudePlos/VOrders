@@ -23,6 +23,9 @@ public class DocItemDTO {
     
     private String rozliczony;
     private String rozliczonyNaDzis;
+    
+    private String okres;
+    private BigDecimal rozId;
 
     public String getRozNumer() {
         return rozNumer;
@@ -78,6 +81,22 @@ public class DocItemDTO {
 
     public void setRozliczonyNaDzis(String rozliczonyNaDzis) {
         this.rozliczonyNaDzis = rozliczonyNaDzis;
+    }
+
+    public String getOkres() {
+        return okres;
+    }
+
+    public void setOkres(String okres) {
+        this.okres = okres;
+    }
+
+    public BigDecimal getRozId() {
+        return rozId;
+    }
+
+    public void setRozId(BigDecimal rozId) {
+        this.rozId = rozId;
     }
 
     

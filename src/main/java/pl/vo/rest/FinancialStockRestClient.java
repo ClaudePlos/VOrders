@@ -5,6 +5,7 @@
  */
 package pl.vo.rest;
 
+import java.math.BigDecimal;
 import javax.annotation.PostConstruct;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -38,12 +39,25 @@ public class FinancialStockRestClient {
         System.out.print( target.toString() );
     }
 
-    ///rest/monitor/1/2017
+    /// items
     public String getFinancialStock( String nip, String rok){
             String response = target.path("rest").
                             path("monitor").
+                            path("items").
                             path(nip).
                             path(rok).
+                            request().
+                            accept(MediaType.APPLICATION_JSON).
+                            get(String.class);
+            return response;
+    }
+    
+    //Doc
+    public String getDocFinancialStock( BigDecimal rozId ){
+            String response = target.path("rest").
+                            path("monitor").
+                            path("doc").
+                            path(rozId.toString()).
                             request().
                             accept(MediaType.APPLICATION_JSON).
                             get(String.class);
