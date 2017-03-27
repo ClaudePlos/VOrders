@@ -21,6 +21,7 @@ import org.milyn.edi.unedifact.d96a.ORDRSP.SegmentGroup30;
 import org.milyn.edi.unedifact.d96a.common.AdditionalProductId;
 import org.milyn.edi.unedifact.d96a.common.BeginningOfMessage;
 import org.milyn.edi.unedifact.d96a.common.DateTimePeriod;
+import org.milyn.edi.unedifact.d96a.common.FreeText;
 import org.milyn.edi.unedifact.d96a.common.NameAndAddress;
 import org.milyn.edi.unedifact.d96a.common.Quantity;
 import pl.vo.VOConsts;
@@ -109,6 +110,18 @@ public class EdifactOrdrspImport implements Serializable {
         String orderNumber = bom.getDocumentMessageNumber();
         doc.setExternalNumber(orderNumber);
     }
+    
+    private void iParseDiscount(Document doc, Ordrsp ord) {
+        List<FreeText> freeText = ord.getFreeText();
+        for ( FreeText fT : freeText )
+        {
+            if ( fT.getTextSubjectQualifier().equals("Discount") )
+            {
+                doc.setDiscount( new BigDecimal( fT.getTextFunctionCoded().toString() ) );
+            }
+        }
+        
+    }
 
     private void iParseNAD(Document doc, NameAndAddress nad) {
         if (nad.getPartyQualifier().equals("BY")) {
@@ -160,6 +173,10 @@ public class EdifactOrdrspImport implements Serializable {
         orderDoc.setStatus(VOConsts.DOC_STATUS_CONFIRMED_BY_SUPPLIER);
 
         iParseBOM(orderDoc, orders.getBeginningOfMessage());
+        
+        
+        //rabat - discount
+        iParseDiscount(orderDoc, orders);
 
         // segment group2  - buyer and supplier
         for (SegmentGroup3 sg3 : orders.getSegmentGroup3()) {

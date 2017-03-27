@@ -120,7 +120,7 @@ public class EdifactExportOrdrsp {
         {
             List<FreeText> listFTX = new ArrayList<>();
             FreeText ftx = new FreeText();
-            ftx.setTextSubjectQualifier("Rabat");
+            ftx.setTextSubjectQualifier("Discount");
             ftx.setTextFunctionCoded(document.getDiscount().toString());
             listFTX.add(ftx);
             orderMsg.setFreeText(listFTX);
