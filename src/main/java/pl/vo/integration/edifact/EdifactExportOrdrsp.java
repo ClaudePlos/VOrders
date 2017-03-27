@@ -116,12 +116,16 @@ public class EdifactExportOrdrsp {
         
         //add ks - rabaty
         //segment tekst wolny, mozna dodawac co sie chce 
-        List<FreeText> listFTX = new ArrayList<>();
-        FreeText ftx = new FreeText();
-        ftx.setTextSubjectQualifier("Rabat");
-        ftx.setTextFunctionCoded("12");
-        listFTX.add(ftx);
-        orderMsg.setFreeText(listFTX);
+        if ( !document.dicountIsEmpty() )
+        {
+            List<FreeText> listFTX = new ArrayList<>();
+            FreeText ftx = new FreeText();
+            ftx.setTextSubjectQualifier("Rabat");
+            ftx.setTextFunctionCoded(document.getDiscount().toString());
+            listFTX.add(ftx);
+            orderMsg.setFreeText(listFTX);
+        }
+        
         
         
                
