@@ -25,6 +25,7 @@ import pl.vo.road_distance.api.RoadDistanceApi;
 import pl.vo.security.api.UsersApi;
 import pl.vo.stock.api.StockApi;
 import pl.vendi.ui.orders.fv.FvPrint;
+import pl.vo.documents.api.PriceListsApi;
 
 /**
  *
@@ -105,6 +106,10 @@ public class VOLookup {
     
     public static DocumentsApi lookupDocumentsApi() { 
         return (DocumentsApi) lookupObject("DocumentsApi");
+    }
+    
+    public static PriceListsApi lookupPriceListsApi() { 
+        return (PriceListsApi) lookupObject("PriceListsApi");
     }
     
      public static DocumentsProcessApi lookupDocumentsProcessApi() { 

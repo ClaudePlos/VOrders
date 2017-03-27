@@ -109,6 +109,9 @@ public class Document extends AuditEntityBase implements Serializable {
 
     @Column(name = "value_brut", columnDefinition = "number(10,2)")
     private BigDecimal valueBrut;
+    
+    @Column(name = "discount", columnDefinition = "number(10,2)")
+    private BigDecimal discount;
 
     @OneToMany(mappedBy = "document", cascade = {CascadeType.ALL, CascadeType.REMOVE}, fetch = FetchType.EAGER, orphanRemoval = true)
     @JsonManagedReference
@@ -266,6 +269,14 @@ public class Document extends AuditEntityBase implements Serializable {
         this.valueBrut = valueBrut;
     }
 
+    public BigDecimal getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(BigDecimal discount) {
+        this.discount = discount;
+    }
+    
     public List<Document> getChildDocuments() {
         return childDocuments;
     }
@@ -411,6 +422,13 @@ public class Document extends AuditEntityBase implements Serializable {
             }
         }
         return false;
+    }
+    
+    public boolean dicountIsEmpty()
+    {
+        if ( this.discount == null )
+            return true;
+        return false;      
     }
 
 }

@@ -7,6 +7,8 @@ package pl.vendi.ui.orders.zwd;
 
 import com.google.common.eventbus.EventBus;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.event.FieldEvents.TextChangeEvent;
+import com.vaadin.event.FieldEvents.TextChangeListener;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
@@ -59,7 +61,7 @@ public class ElZwdDocItemReplace extends HorizontalLayout {
     TextField tfAmountZam = new TextField("Ilość");
     Button butAddZam = new Button("Dodaj zamiennik");
     
-    
+    TextField tfDiscount = new TextField("Rabat %");
     
     public ElZwdDocItemReplace(DocumentWindow parentWindow)
     {
@@ -101,8 +103,19 @@ public class ElZwdDocItemReplace extends HorizontalLayout {
             }
         });
        
+        this.addComponent(tfDiscount);
         
+     
+     
         
+        tfDiscount.addTextChangeListener(new TextChangeListener() {
+            public void textChange(TextChangeEvent event) {
+                BigDecimal value = new BigDecimal(event.getText());
+                document.setDiscount( value );
+                parentWindow.setModified(true);
+            }
+});
+   
 
     }
     
@@ -111,6 +124,13 @@ public class ElZwdDocItemReplace extends HorizontalLayout {
         this.document = doc;
         this.cntPositions = cntPositions;
         this.setEnabled(document != null);
+        setDiscount();
+    }
+    
+    private void setDiscount()
+    {
+        if (  !document.dicountIsEmpty() )
+            tfDiscount.setValue( document.getDiscount().toString() );
     }
     
     private void activeReplacement()
@@ -198,11 +218,12 @@ public class ElZwdDocItemReplace extends HorizontalLayout {
         di.setProduct( cmbProduct.getProduct() );
         di.setAmount( BigDecimal.ZERO );
         di.setAmountConfirmed(amount);
+        
+        
             
 
         document.getItems().add(di);
-        
-        
+      
         cntPositions.addItem(di);
 
         DocumentChangedEvent ev = new DocumentChangedEvent(document);
@@ -211,8 +232,7 @@ public class ElZwdDocItemReplace extends HorizontalLayout {
         parentWindow.setModified(true);
     }
     
-    
-    
+   
     
     
     

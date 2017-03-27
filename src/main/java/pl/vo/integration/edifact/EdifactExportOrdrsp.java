@@ -15,11 +15,14 @@ import org.milyn.edi.unedifact.d96a.ORDRSP.SegmentGroup3;
 import org.milyn.edi.unedifact.d96a.ORDRSP.Ordrsp;
 import org.milyn.edi.unedifact.d96a.ORDRSP.SegmentGroup26;
 import org.milyn.edi.unedifact.d96a.common.AdditionalProductId;
+import org.milyn.edi.unedifact.d96a.common.AllowanceOrCharge;
 import org.milyn.edi.unedifact.d96a.common.BeginningOfMessage;
 import org.milyn.edi.unedifact.d96a.common.DateTimePeriod;
+import org.milyn.edi.unedifact.d96a.common.FreeText;
 import org.milyn.edi.unedifact.d96a.common.ItemDescription;
 import org.milyn.edi.unedifact.d96a.common.LineItem;
 import org.milyn.edi.unedifact.d96a.common.NameAndAddress;
+import org.milyn.edi.unedifact.d96a.common.PaymentInstructions;
 import org.milyn.edi.unedifact.d96a.common.PriceDetails;
 import org.milyn.edi.unedifact.d96a.common.Quantity;
 import org.milyn.edi.unedifact.d96a.common.RelatedIdentificationNumbers;
@@ -109,6 +112,22 @@ public class EdifactExportOrdrsp {
         SectionControl sc = new SectionControl();
         sc.setSectionIdentification("S");
         orderMsg.setSectionControl(sc);
+        
+        
+        //add ks - rabaty
+        //segment tekst wolny, mozna dodawac co sie chce 
+        List<FreeText> listFTX = new ArrayList<>();
+        FreeText ftx = new FreeText();
+        ftx.setTextSubjectQualifier("Rabat");
+        ftx.setTextFunctionCoded("12");
+        listFTX.add(ftx);
+        orderMsg.setFreeText(listFTX);
+        
+        
+               
+                
+                
+        
 
         message.setMessageTrailer(new UNT41());
         message.getMessageTrailer().setSegmentCount(1);

@@ -14,6 +14,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.ejb.EJB;
 import org.vaadin.dialogs.ConfirmDialog;
 import pl.vendi.ui.VOLookup;
 import pl.vendi.ui.VendiOrdersUI;
@@ -28,6 +29,7 @@ import pl.vo.VOConsts;
 import pl.vo.common.model.DictionaryValue;
 import pl.vo.documents.DocumentsApi;
 import pl.vo.documents.api.DocumentsProcessApi;
+import pl.vo.documents.api.PriceListsApi;
 import pl.vo.documents.model.Document;
 import pl.vo.documents.model.DocumentItem;
 import pl.vo.exceptions.VOWrongDataException;
@@ -68,7 +70,8 @@ public class DocumentWindow extends Window implements Button.ClickListener, Prop
     Button butPrint = new Button("Drukuj");
     
 //    Button butChildDocuments = new Button("Dokumenty powiązane");
-
+    
+    PriceListsApi priceListsApi;
     DocumentsApi documentsApi;
     DocumentsProcessApi documentsProcessApi;
 
@@ -98,6 +101,7 @@ public class DocumentWindow extends Window implements Button.ClickListener, Prop
         documentsApi = VOLookup.lookupDocumentsApi();
         documentsProcessApi = VOLookup.lookupDocumentsProcessApi();
         tblPositions = new DocumentItemsWithFilter(documentType, this);
+        priceListsApi= VOLookup.lookupPriceListsApi();
 
         Panel panelContent= new Panel();
         panelContent.setId("panelContent");
@@ -278,6 +282,12 @@ public class DocumentWindow extends Window implements Button.ClickListener, Prop
         if (event.getButton().equals(butSave)) {
             viewToModel(document);
             try {
+                if ( document.getStatus().equals(  VOConsts.DOC_STATUS_RECEIVED_BY_SUPPLIER))
+                {
+        
+                    priceListsApi.assignPricesInDocumentInSupplier(document); 
+                    documentsApi.recalculateDocumentConfirmed(document);
+                }
                 
                 document = documentsApi.save(document);
                 //document = document;

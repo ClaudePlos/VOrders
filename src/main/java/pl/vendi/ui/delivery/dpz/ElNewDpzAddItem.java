@@ -37,6 +37,7 @@ public class ElNewDpzAddItem extends HorizontalLayout{
     
     Button butZamienniki = new Button("Aktywuj zamiennik");
     
+    
     TextField tfAmount = new TextField("Ilość");
     Button butAdd = new Button("Dodaj zamiennik");
     
@@ -88,6 +89,9 @@ public class ElNewDpzAddItem extends HorizontalLayout{
                 addItem();
             }
         });
+        
+        
+        
         
     }
     

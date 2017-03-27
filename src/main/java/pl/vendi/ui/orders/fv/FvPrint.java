@@ -59,6 +59,7 @@ public class FvPrint {
     
     public FvPrint() throws DocumentException, IOException
     {
+        
             BaseFont helvetica = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.EMBEDDED);
             Font helvetica16=new Font(helvetica,16);
         
@@ -98,7 +99,14 @@ public class FvPrint {
 
                     document.add(Chunk.NEWLINE);   //Something like in HTML :-)
                     
-                    Paragraph numInvoice = new Paragraph( order.getOwnNumber().replace("ZWD", "FV"), font16b  );
+                    
+                    // numer faktury
+                    String numerFaktury = 
+                            order.getOwnNumber().replace("ZWD", "FV").substring(0, order.getOwnNumber().length() - 5) 
+                            + order.getDateOperation().getDate()
+                            + "/" + order.getOwnNumber().replace("ZWD", "FV").substring(order.getOwnNumber().length() - 5);
+                    
+                    Paragraph numInvoice = new Paragraph( numerFaktury , font16b  );
                     numInvoice.setAlignment(Element.ALIGN_CENTER);
                     document.add( numInvoice );
                     
@@ -183,7 +191,15 @@ public class FvPrint {
                     
 
 
-                    document.add(Chunk.NEWLINE);   //Something like in HTML :-)							    
+                    document.add(Chunk.NEWLINE);   //Something like in HTML :-)		
+                    
+                    // Rabat 
+                    if ( !order.dicountIsEmpty() )
+                    {
+                        Paragraph labDiscount = new Paragraph( "Rabat: " + order.getDiscount().toString() + "%" , font10  );
+                        document.add(labDiscount);
+                    }
+                    
 
                     document.newPage();            //Opened new page
 
@@ -208,7 +224,7 @@ public class FvPrint {
 
             }
         };
-      StreamResource resource = new StreamResource ( source, "test.pdf" );
+      StreamResource resource = new StreamResource ( source, "faktura.pdf" );
         return resource;
     }
     
@@ -218,7 +234,7 @@ public class FvPrint {
         cell.setBorder(PdfPCell.NO_BORDER);
         cell.addElement(new Paragraph(who, font12b));
         cell.addElement(new Paragraph(name, font12));
-        cell.addElement(new Paragraph(line1, font12));
+        cell.addElement(new Paragraph(line1)); // check
         cell.addElement(new Paragraph("NIP: " + line2, font12));
         cell.addElement(new Paragraph(String.format("%s %s %s", countryID, postcode, city), font12));
         return cell;

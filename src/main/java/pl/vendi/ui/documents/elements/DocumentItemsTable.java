@@ -427,25 +427,8 @@ public class DocumentItemsTable extends Table {
         });
         
          
-        this.addGeneratedColumn("valueBrut", new ColumnGenerator() {
-
-            @Override
-            public Object generateCell(Table source, final Object itemId, Object columnId) {
-
-                Label lab = new Label();
-                        DocumentItem di = (DocumentItem) itemId;
-                        if (di != null && di.getValueBrut()!= null) {
-                            lab.setValue( VOUtils.formatCurrency(di.getValueBrut()) );
-                            lab.setWidth("100%");
-                            lab.addStyleName( "labelRight");
-                            
-                        } else {
-                            lab.setValue("");
-                        }
-                return lab;
-
-            }
-        });
+        
+        
         // }
 
         setColumnSet();
