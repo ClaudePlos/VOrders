@@ -280,10 +280,10 @@ public class DocumentsApi extends GenericDao<Document, Long> implements Serializ
         return ndoc; 
     }
     
-    
+    // ks
     public void checkIdDocAndIdItems(Document doc) throws VOWrongDataException
     {
-        Document docInOrder = getDocumentForOwnNumberAndData( doc.getExternalNumber(), doc.getDateDelivery() );
+        Document docInOrder = getDocumentForOwnNumberAndData( doc.getExternalNumber(), doc.getDateOperation() );
         doc.setId(  docInOrder.getId() );
         doc.setOwnNumber( docInOrder.getOwnNumber() );
         
@@ -300,15 +300,15 @@ public class DocumentsApi extends GenericDao<Document, Long> implements Serializ
         
     }
     
-    
-    public Document getDocumentForOwnNumberAndData(String externalNumber, Date dateDelivery) throws VoNoResultException {
+    //ks
+    public Document getDocumentForOwnNumberAndData(String externalNumber, Date dateOperation) throws VoNoResultException {
         
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Document> cq = cb.createQuery(classType);
         Root<Document> root = cq.from(classType);
         
         Predicate eq = cb.and( cb.equal(root.get("ownNumber"), cb.literal(externalNumber)),
-                               cb.equal(root.get("dateDelivery"), cb.literal(dateDelivery))
+                               cb.equal(root.get("dateOperation"), cb.literal(dateOperation))
                                 );
         cq.where(eq);
         cq.select(root);

@@ -14,6 +14,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.PopupView;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.ValoTheme;
 import java.util.ArrayList;
 import pl.vo.documents.model.Document;
 import pl.vo.documents.model.DocumentItem;
@@ -34,6 +35,7 @@ public class DocumentItemsWithFilter extends VerticalLayout {
     BeanItemContainer<DocumentItem> cntVisible = new BeanItemContainer< DocumentItem>(DocumentItem.class);
     HorizontalLayout hboxGora = new HorizontalLayout();
     TextField tfFiltr = new TextField();
+    Label labDiscount = new Label();
     
 
     public DocumentItemsWithFilter(String documentTypeGroup, DocumentWindow parentWindow) {
@@ -45,6 +47,7 @@ public class DocumentItemsWithFilter extends VerticalLayout {
         this.addComponent(hboxGora);
         hboxGora.addComponent( new Label("Filtr:"));
         hboxGora.addComponent( tfFiltr);
+        hboxGora.addComponent( labDiscount );
         this.addComponent( itemsTable );
         this.setSizeFull();
         this.setExpandRatio( itemsTable, 1);
@@ -104,6 +107,17 @@ public class DocumentItemsWithFilter extends VerticalLayout {
         // set column
 //        setColumnSet();
 
+        showDiscount();
+    }
+    
+    
+    private void showDiscount()
+    {
+        if ( !this.document.dicountIsEmpty() )
+        {
+            labDiscount.setStyleName( ValoTheme.LABEL_SUCCESS);
+            labDiscount.setValue( " Rabat: " + this.document.getDiscount() + "%" );
+        }
     }
 
     public BeanItemContainer<DocumentItem> getCnt() {

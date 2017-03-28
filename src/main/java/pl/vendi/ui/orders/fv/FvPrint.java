@@ -33,6 +33,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -55,6 +56,8 @@ public class FvPrint {
     protected Font font12b;
     protected Font font14;
     protected Font font16b;
+    
+    public String numerFaktury = null;
 
     
     public FvPrint() throws DocumentException, IOException
@@ -77,9 +80,17 @@ public class FvPrint {
     
     
     public StreamResource runFVStream( Long dokId ) throws DocumentException, IOException {
+        
+        pl.vo.documents.model.Document order = VOLookup.lookupDocumentsApi().get(dokId);
+        
+        // numer faktury
+        numerFaktury = 
+                order.getOwnNumber().replace("ZWD", "FV").substring(0, order.getOwnNumber().length() - 5) 
+                + order.getDateOperation().getDate()
+                + "/" + order.getOwnNumber().replace("ZWD", "FV").substring(order.getOwnNumber().length() - 5);
+        
         StreamResource.StreamSource source = new StreamResource.StreamSource() {
-
-            pl.vo.documents.model.Document order = VOLookup.lookupDocumentsApi().get(dokId);
+            
             
             public InputStream getStream() {
              
@@ -100,11 +111,7 @@ public class FvPrint {
                     document.add(Chunk.NEWLINE);   //Something like in HTML :-)
                     
                     
-                    // numer faktury
-                    String numerFaktury = 
-                            order.getOwnNumber().replace("ZWD", "FV").substring(0, order.getOwnNumber().length() - 5) 
-                            + order.getDateOperation().getDate()
-                            + "/" + order.getOwnNumber().replace("ZWD", "FV").substring(order.getOwnNumber().length() - 5);
+                    
                     
                     Paragraph numInvoice = new Paragraph( numerFaktury , font16b  );
                     numInvoice.setAlignment(Element.ALIGN_CENTER);
@@ -198,6 +205,22 @@ public class FvPrint {
                     {
                         Paragraph labDiscount = new Paragraph( "Rabat: " + order.getDiscount().toString() + "%" , font10  );
                         document.add(labDiscount);
+                        
+                        
+                        BigDecimal nettoDiscount = sumNetto.subtract(sumNetto.multiply( (order.getDiscount().divide( new BigDecimal(100) ) ) ) );
+                        BigDecimal taxDiscount = sumTax.subtract(sumTax.multiply( (order.getDiscount().divide( new BigDecimal(100) ) ) ) );
+                        BigDecimal bruttoDiscount = sumBrutto.subtract(sumBrutto.multiply( (order.getDiscount().divide( new BigDecimal(100) ) ) ) );
+                        Paragraph labBruttoDiscount = new Paragraph( 
+                                "Wartość po rabacie: "  );
+                        document.add(labBruttoDiscount);
+                        
+                        document.add(Chunk.NEWLINE);
+                        
+                        PdfPTable t3 = getTotalsTable( df.format( nettoDiscount )
+                                , df.format( taxDiscount )
+                                , df.format( bruttoDiscount) );
+                        document.add( t3 );
+                        
                     }
                     
 
@@ -224,7 +247,8 @@ public class FvPrint {
 
             }
         };
-      StreamResource resource = new StreamResource ( source, "faktura.pdf" );
+        
+      StreamResource resource = new StreamResource ( source,  numerFaktury.replace("/", "_") + ".pdf" );
         return resource;
     }
     
@@ -234,7 +258,7 @@ public class FvPrint {
         cell.setBorder(PdfPCell.NO_BORDER);
         cell.addElement(new Paragraph(who, font12b));
         cell.addElement(new Paragraph(name, font12));
-        cell.addElement(new Paragraph(line1)); // check
+        cell.addElement(new Paragraph(line1, font12)); // check
         cell.addElement(new Paragraph("NIP: " + line2, font12));
         cell.addElement(new Paragraph(String.format("%s %s %s", countryID, postcode, city), font12));
         return cell;
