@@ -16,6 +16,7 @@ import pl.vendi.ui.VOLookup;
 import pl.vendi.ui.VendiOrdersUI;
 import pl.vendi.ui.documents.elements.DocumentWindow;
 import pl.vendi.ui.documents.elements.DocumentsTable;
+import pl.vendi.ui.orders.reports.ReportsZWD;
 import pl.vendi.ui.priceLists.WndPriceList;
 import pl.vo.VOConsts;
 import pl.vo.documents.model.Document;
@@ -34,6 +35,8 @@ public class WndOrdersZwd extends Window
     
     Button butAdd = new Button("Dodaj ZWD");
     Button butRefresh = new Button("Odśwież");
+    
+    Button butReports = new Button("Raporty");
      
     public WndOrdersZwd()
     {
@@ -78,7 +81,17 @@ public class WndOrdersZwd extends Window
             }
         });
         
-      
+        hboxTop.addComponent( butReports );
+        
+        butReports.addClickListener( new Button.ClickListener() {
+
+            @Override
+            public void buttonClick(Button.ClickEvent event)
+            {
+                ReportsZWD rZWD = new ReportsZWD();
+                VendiOrdersUI.showWindow(rZWD);
+            }
+        });
         
         tabOrders.refresh();
     }
