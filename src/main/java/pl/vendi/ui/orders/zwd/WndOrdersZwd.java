@@ -5,6 +5,7 @@
  */
 package pl.vendi.ui.orders.zwd;
 
+import com.itextpdf.text.DocumentException;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.ui.Button;
@@ -12,6 +13,9 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import pl.vendi.ui.VOLookup;
 import pl.vendi.ui.VendiOrdersUI;
 import pl.vendi.ui.documents.elements.DocumentWindow;
@@ -88,8 +92,16 @@ public class WndOrdersZwd extends Window
             @Override
             public void buttonClick(Button.ClickEvent event)
             {
-                ReportsZWD rZWD = new ReportsZWD();
-                VendiOrdersUI.showWindow(rZWD);
+                ReportsZWD rZWD;
+                try {
+                    rZWD = new ReportsZWD();
+                    VendiOrdersUI.showWindow(rZWD);
+                } catch (DocumentException ex) {
+                    Logger.getLogger(WndOrdersZwd.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(WndOrdersZwd.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
             }
         });
         

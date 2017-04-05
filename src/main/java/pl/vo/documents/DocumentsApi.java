@@ -321,7 +321,40 @@ public class DocumentsApi extends GenericDao<Document, Long> implements Serializ
         }
     }
     
-    
+    //ks
+    public List<Document> findDocumentsFromTo(String[] types, Long orgUnitId, Date dOd, Date dDo, String username) { //, Long supplId
+        List<Predicate> predicates = new ArrayList<Predicate>();
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Document> cq = cb.createQuery(classType);
+        Root<Document> root = cq.from(classType);
+        cq.select(root);
+        
+        // type 
+        predicates.add(root.get("type").in(types));
+        if (orgUnitId != null) {
+            predicates.add(cb.equal(root.get("companyUnit").get("id"), cb.literal(orgUnitId)));
+        }
+        
+        //if (supplId != null) {
+        //    predicates.add(cb.equal(root.get("supplier").get("id"), cb.literal(supplId)));
+        //}
+
+        if (dOd != null) {
+            predicates.add(cb.between(root.<Date>get("dateOperation"), cb.literal(VOUtils.firstDayOfMonth(dOd)), cb.literal(VOUtils.lastDayOfMonth(dDo))));
+        }
+        
+        cq.orderBy( cb.desc(root.get("dateOperation")) ); // ks add sort 
+
+        // apply permistions 
+        addPermistionPredicates( predicates, cb, cq, root);
+        addInstanceCodeCriterias(cb, cq, root,predicates);
+        //
+      //  cq.where(cb.and(predicates.toArray(new Predicate[1])));
+
+        List<Document> ret = (List<Document>) em.createQuery(cq).getResultList();
+        return ret;
+    }
     
 
 }
