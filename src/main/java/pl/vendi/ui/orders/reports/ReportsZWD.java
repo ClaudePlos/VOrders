@@ -70,6 +70,9 @@ public class ReportsZWD extends Window implements Button.ClickListener {
     protected Font font14;
     protected Font font16b;
     
+    private DateFieldPl dataFrom = new DateFieldPl("2. Data od");
+    private DateFieldPl dataTo = new DateFieldPl("3. Data do");
+    
   
     public ReportsZWD() throws DocumentException, IOException
     {
@@ -136,50 +139,39 @@ public class ReportsZWD extends Window implements Button.ClickListener {
         hboxAdd.addComponent(listReports);
 
         
-        DateFieldPl dataFrom = new DateFieldPl("2. Data od");
-        hboxAdd.addComponent(dataFrom);
         
-        DateFieldPl dataTo = new DateFieldPl("3. Data do");
+        hboxAdd.addComponent(dataFrom);
+
         hboxAdd.addComponent(dataTo);
         
         
         
         Button butRun = new Button("Uruchom");
         
-        butRun.addClickListener( new Button.ClickListener() {
-
-            @Override
-            public void buttonClick(Button.ClickEvent event)
-            {
-                Date dF = dataFrom.getValue() ;
-                Date dT = dataTo.getValue() ;
-                Long orgUnitId = cmbOrganisationUnit.getOrganisationUnitId();
-                String[] docTypes = null;
-                docTypes = new String[]{ VOConsts.DOC_TYPE_ZWD };
-                List<Document> docs = documentsApi.findDocumentsFromTo( docTypes, orgUnitId,  dF, dT, VendiOrdersUI.getLoggedUsername());
-                
-                
-                
-                StreamResource myResource;
+        StreamResource myResource;
            
              
-                    myResource = runPdf001( docs );
-                    FileDownloader fileDownloader = new FileDownloader(myResource);
-                    fileDownloader.extend(butRun);
-               
-                
-                
-            }
-        });
+        myResource = runPdf001();
+        FileDownloader fileDownloader = new FileDownloader(myResource);
+        fileDownloader.extend(butRun);
         
+        
+      
         
         vboxMain.addComponent(butRun);
         
         
     }
     
-    private StreamResource runPdf001( List<Document> docs )
+    private StreamResource runPdf001()
     {
+        
+        Date dF = dataFrom.getValue() ;
+        Date dT = dataTo.getValue() ;
+        Long orgUnitId = cmbOrganisationUnit.getOrganisationUnitId();
+        String[] docTypes = null;
+        docTypes = new String[]{ VOConsts.DOC_TYPE_ZWD };
+        List<Document> docs = documentsApi.findDocumentsFromTo( docTypes, orgUnitId,  dF, dT, VendiOrdersUI.getLoggedUsername());  
       
       StreamResource.StreamSource source = new StreamResource.StreamSource() { 
           
@@ -216,13 +208,13 @@ public class ReportsZWD extends Window implements Button.ClickListener {
                     table.setSpacingBefore(10);
                     table.setSpacingAfter(10);
                     table.setWidths(new int[]{4, 4, 7, 1, 2, 2, 2});
-                    table.addCell(getCell("OwnNumber", Element.ALIGN_LEFT, font12b));
-                    table.addCell(getCell("ExternalNumber", Element.ALIGN_LEFT, font12b));
-                    table.addCell(getCell("Description", Element.ALIGN_LEFT, font12b));
-                    table.addCell(getCell("Status", Element.ALIGN_LEFT, font12b));
-                    table.addCell(getCell("Client", Element.ALIGN_LEFT, font12b));
-                    table.addCell(getCell("CompanyUnit", Element.ALIGN_LEFT, font12b));
-                    table.addCell(getCell("Data", Element.ALIGN_LEFT, font12b));
+                    table.addCell(getCell("OwnNumber", Element.ALIGN_LEFT, font7));
+                    table.addCell(getCell("ExternalNumber", Element.ALIGN_LEFT, font7));
+                    table.addCell(getCell("Description", Element.ALIGN_LEFT, font7));
+                    table.addCell(getCell("Status", Element.ALIGN_LEFT, font7));
+                    table.addCell(getCell("Client", Element.ALIGN_LEFT, font7));
+                    table.addCell(getCell("CompanyUnit", Element.ALIGN_LEFT, font7));
+                    table.addCell(getCell("Data", Element.ALIGN_LEFT, font7));
                     
                     
                     //Locale.setDefault( new Locale("pl","PL") );
@@ -235,9 +227,21 @@ public class ReportsZWD extends Window implements Button.ClickListener {
                         table.addCell(getCell( doc.getExternalNumber(), Element.ALIGN_LEFT, font7));
                         table.addCell(getCell( doc.getDescription(), Element.ALIGN_LEFT, font7));
                         table.addCell(getCell( doc.getStatus(), Element.ALIGN_LEFT, font7));
-                        table.addCell(getCell( doc.getClient().getName(), Element.ALIGN_LEFT, font7));
-                        table.addCell(getCell( doc.getCompanyUnit().getName(), Element.ALIGN_LEFT, font7));
-                        table.addCell(getCell( doc.getDateDelivery().toString() , Element.ALIGN_LEFT, font7));
+                        
+                        if ( doc.getClient() != null )
+                          table.addCell(getCell( doc.getClient().getName(), Element.ALIGN_LEFT, font7));
+                        else 
+                          table.addCell("");
+                        
+                        if ( doc.getClient() != null )
+                          table.addCell(getCell( doc.getCompanyUnit().getName(), Element.ALIGN_LEFT, font7));
+                        else 
+                          table.addCell("");
+                        
+                        if ( doc.getDateDelivery() != null )
+                          table.addCell(getCell( doc.getDateDelivery().toString() , Element.ALIGN_LEFT, font7));
+                        else 
+                          table.addCell("");
                         
                     }
                     document.add(table);
