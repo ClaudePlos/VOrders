@@ -80,6 +80,11 @@
 			<version>${vaadin.version}</version>
 			<!--<scope>provided</scope>-->
 		</dependency>
+                <dependency>
+                    <groupId>com.vaadin.addon</groupId>
+                    <artifactId>tableexport-for-vaadin</artifactId>
+                    <version>1.6.2</version>
+                 </dependency>
 		<!--
 		  Needed when using the widgetset optimizer (custom ConnectorBundleLoaderFactory).
 		  

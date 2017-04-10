@@ -8,10 +8,8 @@ package pl.vendi.ui.finacialStock;
 
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import pl.vendi.ui.common.ComboBoxProducts;
 import pl.vo.rest.FinancialStockRestClient;
 
 import com.google.gson.JsonElement;
@@ -19,18 +17,18 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.JsonArray;
+import com.vaadin.addon.tableexport.ExcelExport;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.server.FontAwesome;
-import com.vaadin.server.Sizeable;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.themes.ChameleonTheme;
 import java.util.ArrayList;
 import java.util.List;
 import pl.vendi.ui.VOLookup;
-import pl.vendi.ui.common.ComboBoxCompany;
 import pl.vendi.ui.finacialStock.model.DocDTO;
 import pl.vendi.ui.finacialStock.model.DocItemDTO;
 import pl.vo.company.model.Company;
@@ -50,6 +48,9 @@ public class FinancialStock extends Window implements Button.ClickListener {
     ComboBox cmbCompany2 = new ComboBox("Kontrahent");
     ComboBox cmbRok = new ComboBox("Rok");
     Button butGetData = new Button("Pobierz dane");
+    
+    Button butExcel = new Button("Excel");
+    Button butExcelDok = new Button("Excel");
     
     FinancialStockRestClient restClient = new FinancialStockRestClient();
     
@@ -136,6 +137,30 @@ public FinancialStock() {
         vboxMain.addComponent(grid);
         vboxMain.setExpandRatio(grid, 1);
         
+        vboxMain.addComponent( butExcel );
+        
+        butExcel.addClickListener( new Button.ClickListener() {
+
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                        
+                    if (grid.size() > 0){
+
+                        ExcelExport excelExp = new ExcelExport(grid, "Monitor rozrachunkow");
+                        excelExp.setReportTitle("Monitor rozrachunkow*");
+                        excelExp.setExportFileName("MonitRozrachunkow");
+                        excelExp.setDisplayTotals(false);
+                        excelExp.setDoubleDataFormat("0");
+                        excelExp.export();
+
+                    }else{
+                         Notification.show("Nie udało się zrobić excela", Notification.Type.ERROR_MESSAGE);
+                    }
+
+                }
+                
+        });
+        
         
         Table gridDok = new Table(); // dokumenty
         gridDok.setStyleName("iso3166");
@@ -151,6 +176,30 @@ public FinancialStock() {
         gridDok.setHeight("100%");
         vboxMain.addComponent(gridDok);
         vboxMain.setExpandRatio(gridDok, 1);
+        
+        vboxMain.addComponent( butExcelDok );
+        
+        butExcelDok.addClickListener( new Button.ClickListener() {
+
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                        
+                    if (gridDok.size() > 0){
+
+                        ExcelExport excelExp = new ExcelExport(gridDok, "Platnosci");
+                        excelExp.setReportTitle("Platnosci*");
+                        excelExp.setExportFileName("PlatnosciFin");
+                        excelExp.setDisplayTotals(false);
+                        excelExp.setDoubleDataFormat("0");
+                        excelExp.export();
+
+                    }else{
+                         Notification.show("Nie udało się zrobić excela", Notification.Type.ERROR_MESSAGE);
+                    }
+
+                }
+                
+        });
         
         
         butGetData.addClickListener( new Button.ClickListener() {
