@@ -148,7 +148,7 @@ public FinancialStock() {
 
                         ExcelExport excelExp = new ExcelExport(grid, "Monitor rozrachunkow");
                         excelExp.setReportTitle("Monitor rozrachunkow*");
-                        excelExp.setExportFileName("MonitRozrachunkow");
+                        excelExp.setExportFileName("MonitRozrachunkow.xls");
                         excelExp.setDisplayTotals(false);
                         excelExp.setDoubleDataFormat("0");
                         excelExp.export();
@@ -188,7 +188,7 @@ public FinancialStock() {
 
                         ExcelExport excelExp = new ExcelExport(gridDok, "Platnosci");
                         excelExp.setReportTitle("Platnosci*");
-                        excelExp.setExportFileName("PlatnosciFin");
+                        excelExp.setExportFileName("PlatnosciFin.xls");
                         excelExp.setDisplayTotals(false);
                         excelExp.setDoubleDataFormat("0");
                         excelExp.export();
