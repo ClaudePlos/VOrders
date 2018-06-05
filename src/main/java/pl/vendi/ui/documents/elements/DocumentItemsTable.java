@@ -426,7 +426,45 @@ public class DocumentItemsTable extends Table {
             }
         });
         
+         this.addGeneratedColumn("document", new ColumnGenerator() {
+
+            @Override
+            public Object generateCell(Table source, final Object itemId, Object columnId) {
+
+                Label lab = new Label();
+                        DocumentItem di = (DocumentItem) itemId;
+                        if (di != null && di.getDocument() != null) {
+                            lab.setValue( di.getDocument().getExternalNumber() );
+                            lab.setWidth("100%");
+                            lab.addStyleName( "labelRight");
+                            
+                        } else {
+                            lab.setValue("");
+                        }
+                return lab;
+
+            }
+        });
          
+         this.addGeneratedColumn("product.measureUnit", new ColumnGenerator() {
+
+            @Override
+            public Object generateCell(Table source, final Object itemId, Object columnId) {
+
+                Label lab = new Label();
+                        DocumentItem di = (DocumentItem) itemId;
+                        if (di != null && di.getProduct().getMeasureUnit() != null) {
+                            lab.setValue( di.getProduct().getMeasureUnit().getName() );
+                            lab.setWidth("100%");
+                            lab.addStyleName( "labelRight");
+                            
+                        } else {
+                            lab.setValue("");
+                        }
+                return lab;
+
+            }
+        });
         
         
         // }
@@ -472,16 +510,16 @@ public class DocumentItemsTable extends Table {
         columnCaptions.clear();
 
         addColumn("product", "Towar");
-         addColumn("product.measureUnit.abbr", "Jm");
+        addColumn("product.measureUnit.abbr", "Jm");
 
        
         if (documentTypeGroup.equals(VOConsts.DOC_TYPE_PRICE_LIST)
                
                 || documentTypeGroup.equals(VOConsts.DOC_TYPE_ZWD)) 
         {
-            if ( document != null && document.getStatus().equals( VOConsts.DOC_STATUS_OPEN))
-                 addColumn("unitPriceNetEdit", "Cena Edycja");
-                else
+            if ( document != null && document.getStatus().equals( VOConsts.DOC_STATUS_OPEN)){
+               addColumn("unitPriceNetEdit", "Cena Edycja"); 
+            } else
             addColumn("unitPriceNet", "Cena PLN");
         }
         
@@ -549,6 +587,10 @@ public class DocumentItemsTable extends Table {
         if (document != null && document.getStatus().equals(VOConsts.DOC_STATUS_OPEN)) {
             addColumn("delete", "Usuń");
         }
+        
+        //ks
+        addColumn("document", "Dokument");
+        addColumn("product.measureUnit", "Miara");
 
         this.setVisibleColumns(columns.toArray());
         this.setColumnHeaders(columnCaptions.toArray(new String[0]));

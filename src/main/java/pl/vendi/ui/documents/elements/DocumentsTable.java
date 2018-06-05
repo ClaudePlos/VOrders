@@ -246,7 +246,7 @@ public class DocumentsTable extends VerticalLayout implements Property.ValueChan
         columns.clear();
         columnCaptions.clear();
 
-        addColumn("id", "Id");
+        //addColumn("id", "Id");
         addColumn("type", "Typ");
         if (documentType == null || documentType.equals(VOConsts.DOC_TYPE_ZWK)
                 || documentType.equals(VOConsts.DOC_TYPE_PZ)
