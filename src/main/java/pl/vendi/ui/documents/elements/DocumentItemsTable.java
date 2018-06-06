@@ -118,7 +118,7 @@ public class DocumentItemsTable extends Table {
                             public void valueChange(Property.ValueChangeEvent event) {
                                 String sval = (String) event.getProperty().getValue();
                                 DocumentItem di = (DocumentItem) itemId;
-                                di.setUnitPriceNet(new BigDecimal(sval));
+                                di.setUnitPriceNet(new BigDecimal(sval.replace(",", ".")));
                                setModified();
                             }
                         });
@@ -369,14 +369,18 @@ public class DocumentItemsTable extends Table {
                     {
                         Product p = pcc.getProduct();
 
-                        RoadDistance distance = apiRoad.getByCmpUnitIdAndCmpId( orgDestination.getId(), pcc.getCmpId() );
-
-                        pcc.setDistanceDelivery( distance.getDistance() );
-                        
-                        if ( pcc.getDistanceDelivery().intValue() < smallestDistance )
-                        {
-                            smallestDistance = pcc.getDistanceDelivery().intValue();
+                        if ( orgDestination != null ) {
+                            RoadDistance distance = apiRoad.getByCmpUnitIdAndCmpId( orgDestination.getId(), pcc.getCmpId() );
+                            pcc.setDistanceDelivery( distance.getDistance() );  
+ 
+                            if ( pcc.getDistanceDelivery().intValue() < smallestDistance )
+                            {
+                                smallestDistance = pcc.getDistanceDelivery().intValue();
+                            }
+                        } else {
+                           pcc.setDistanceDelivery(Long.parseLong("0")); 
                         }
+                            
                         
                     }
                 
@@ -385,14 +389,20 @@ public class DocumentItemsTable extends Table {
                     {
                         Company cmp = VOLookup.lookupCompanysApi().getById(  pcc.getCmpId() );
                         
+                        String companyUnitAddress = "";
                         String url = "https://www.google.pl/maps/dir/Ożarów+Mazowiecki/Wyszków/";
                         Link link = new Link("Trasa dostawy!", new ExternalResource(url));
                         link.setTargetName("_blank");
-                        url = "https://www.google.pl/maps/dir/" + document.getCompanyUnit().getAddress() + "/" + cmp.getAddress();
+                        
+                        if ( document.getCompanyUnit() != null ){
+                            companyUnitAddress = document.getCompanyUnit().getAddress();
+                        }
+                        
+                        url = "https://www.google.pl/maps/dir/" + companyUnitAddress + "/" + cmp.getAddress();
                         link.setResource(new ExternalResource(url));
                         
                     
-                        if ( pcc.getDistanceDelivery().intValue() == smallestDistance )
+                        if ( pcc.getDistanceDelivery() != null && pcc.getDistanceDelivery().intValue() == smallestDistance )
                         {
                           Label label1 = new Label( new Label( cmp.getName() + " (" + pcc.getDistanceDelivery().toString() + " km)"   ) );
                           label1.setStyleName( ValoTheme.LABEL_SUCCESS);

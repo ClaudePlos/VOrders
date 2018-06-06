@@ -16,6 +16,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import java.util.ArrayList;
+import pl.vendi.ui.common.VoExceptionHandler;
 import pl.vo.documents.model.Document;
 import pl.vo.documents.model.DocumentItem;
 
@@ -127,12 +128,20 @@ public class DocumentItemsWithFilter extends VerticalLayout {
     public void refreshRows()
     {
         if (document != null) {
-            cnt.removeAllItems();
 
-//            if (this.isEditable()) {
-            //  document.getItems().add( new DocumentItem( ));
-//            }
-            cnt.addAll(document.getItems());
+               cnt.removeAllItems();
+
+    //            if (this.isEditable()) {
+                //  document.getItems().add( new DocumentItem( ));
+    //            }
+
+                try {
+                    cnt.addAll(document.getItems());
+                } catch (Exception e) {
+                    return;
+                } 
+            
+            
             doFilter();
         }
     }
