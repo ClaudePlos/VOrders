@@ -130,7 +130,7 @@ public class DocumentItemsTable extends Table {
             });
 
       
-            // non editable
+            // non editable - good
             this.addGeneratedColumn("unitPriceNet", new ColumnGenerator() {
 
                 @Override
