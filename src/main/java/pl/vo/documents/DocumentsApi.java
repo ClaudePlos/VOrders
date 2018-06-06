@@ -85,7 +85,8 @@ public class DocumentsApi extends GenericDao<Document, Long> implements Serializ
         }
 
         if (month != null) {
-            predicates.add(cb.between(root.<Date>get("dateOperation"), cb.literal(VOUtils.firstDayOfMonth(month)), cb.literal(VOUtils.lastDayOfMonth(month))));
+            //predicates.add(cb.between(root.<Date>get("dateOperation"), cb.literal(VOUtils.firstDayOfMonth(month)), cb.literal(VOUtils.lastDayOfMonth(month))));
+            predicates.add(cb.between(root.<Date>get("dateOperation"), VOUtils.firstDayOfMonth(month), VOUtils.lastDayOfMonth(month) ));
         }
         
         cq.orderBy( cb.desc(root.get("dateOperation")) ); // ks add sort 
@@ -341,7 +342,8 @@ public class DocumentsApi extends GenericDao<Document, Long> implements Serializ
         //}
 
         if (dOd != null) {
-            predicates.add(cb.between(root.<Date>get("dateOperation"), cb.literal(VOUtils.firstDayOfMonth(dOd)), cb.literal(VOUtils.lastDayOfMonth(dDo))));
+            //predicates.add(cb.between(root.<Date>get("dateOperation"), cb.literal(VOUtils.firstDayOfMonth(dOd)), cb.literal(VOUtils.lastDayOfMonth(dDo))));
+            predicates.add(cb.between(root.<Date>get("dateOperation"), VOUtils.firstDayOfMonth(dOd), VOUtils.lastDayOfMonth(dDo) ));
         }
         
         cq.orderBy( cb.desc(root.get("dateOperation")) ); // ks add sort 

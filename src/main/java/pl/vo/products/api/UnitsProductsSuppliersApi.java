@@ -65,12 +65,14 @@ public class UnitsProductsSuppliersApi extends GenericDao<UnitsProductsSuppliers
          Predicate predUnitId =  cb.equal( units.get("unit").get("id"), cb.literal( unitId )); 
         if ( atDate != null   )
         {
-            // add date condition
+            // add date condition lessThanOrEqualTo
+            //cb.or(  cb.isNull(units.get("dateFrom")), cb.lessThanOrEqualTo( units.<Date>get("dateFrom"), cb.literal(atDate) ) ) , 
+            //cb.or(  cb.isNull(units.get("dateTill")), cb.greaterThanOrEqualTo( units.<Date>get("dateTill"), cb.literal(atDate)))
             Predicate predDate = cb.and
-                    ( 
-                             cb.or(  cb.isNull(units.get("dateFrom")), cb.lessThanOrEqualTo( units.<Date>get("dateFrom"), cb.literal(atDate) ) ) , 
-                             cb.or(  cb.isNull(units.get("dateTill")), cb.greaterThanOrEqualTo(units.<Date>get("dateTill"), cb.literal(atDate)))
-                    );
+            ( 
+                cb.or(  cb.isNull(units.get("dateFrom")), cb.lessThanOrEqualTo( units.<Date>get("dateFrom"), atDate ) ) , 
+                cb.or(  cb.isNull(units.get("dateTill")), cb.greaterThanOrEqualTo( units.<Date>get("dateTill"), atDate ))
+            );
             
             cq.where ( cb.and( predUnitId, predDate ));
         }
