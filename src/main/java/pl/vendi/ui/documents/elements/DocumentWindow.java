@@ -304,6 +304,10 @@ public class DocumentWindow extends Window implements Button.ClickListener, Prop
         }
         else if ( event.getButton().equals(butPrint))
         {
+
+            
+            this.document.getItems();
+            
             String url = "../resources/print/document/" + this.document.getId();
             getUI().getPage().open(url, "_blank");
         }

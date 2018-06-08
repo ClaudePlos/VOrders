@@ -28,6 +28,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import pl.vendi.ui.VOLookup;
 import pl.vendi.ui.common.ComboBoxProducts;
 import pl.vo.VOConsts;
@@ -63,6 +64,8 @@ public class DocumentItemsTable extends Table {
     DocumentItemsWithFilter parent; 
     
     RoadDistanceApi apiRoad;
+    
+    
 
     public DocumentItemsTable(String documentTypeGroup, DocumentWindow parentWindow , DocumentItemsWithFilter parent)
     {
@@ -388,9 +391,24 @@ public class DocumentItemsTable extends Table {
                     for ( ProductCmpCode pcc :  di.getProduct().getCodes() )
                     {
                         Company cmp = VOLookup.lookupCompanysApi().getById(  pcc.getCmpId() );
-                        
+                        Random generator = new Random();
                         String companyUnitAddress = "";
                         String url = "https://www.google.pl/maps/dir/Ożarów+Mazowiecki/Wyszków/";
+                        
+                        int ilosc = generator.nextInt(1000);
+                        Label labTowarDostepnosc = new Label();
+                        
+                        if ( ilosc > 100 ){
+                           labTowarDostepnosc.setValue("Towar dostępny ilosc: " + (ilosc - 100) ); 
+                           labTowarDostepnosc.setStyleName( ValoTheme.LABEL_SUCCESS ); 
+                        } else {
+                            labTowarDostepnosc.setValue("Brak towaru ilosc: 0"); 
+                           labTowarDostepnosc.setStyleName( ValoTheme.LABEL_SUCCESS );
+                        }
+                        
+         
+                        
+                     
                         Link link = new Link("Trasa dostawy!", new ExternalResource(url));
                         link.setTargetName("_blank");
                         
@@ -407,6 +425,7 @@ public class DocumentItemsTable extends Table {
                           Label label1 = new Label( new Label( cmp.getName() + " (" + pcc.getDistanceDelivery().toString() + " km)"   ) );
                           label1.setStyleName( ValoTheme.LABEL_SUCCESS);
                           popupContent.addComponent( label1 );
+                          popupContent.addComponent( labTowarDostepnosc );
                           popupContent.addComponent(link);
                         }
                         else
@@ -414,6 +433,7 @@ public class DocumentItemsTable extends Table {
                           Label label1 = new Label( new Label( cmp.getName() + " (" + pcc.getDistanceDelivery().toString() + " km)"   ) );
                           label1.setStyleName( ValoTheme.LABEL_FAILURE);
                           popupContent.addComponent( label1 );
+                          popupContent.addComponent( labTowarDostepnosc );
                           popupContent.addComponent(link);  
                         }
                    

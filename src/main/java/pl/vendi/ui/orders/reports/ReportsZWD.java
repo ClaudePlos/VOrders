@@ -33,6 +33,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -61,6 +62,8 @@ public class ReportsZWD extends Window implements Button.ClickListener {
     HorizontalLayout hboxAdd = new HorizontalLayout();
 
     ComboBoxOrganisationUnit cmbOrganisationUnit = new ComboBoxOrganisationUnit("Jednostka org");
+    
+    SimpleDateFormat dt1 = new SimpleDateFormat("yyyy-MM-dd");
     
     protected Font font7;
     protected Font font10;
@@ -207,7 +210,7 @@ public class ReportsZWD extends Window implements Button.ClickListener {
                     table.setWidthPercentage(100);
                     table.setSpacingBefore(10);
                     table.setSpacingAfter(10);
-                    table.setWidths(new int[]{4, 4, 7, 1, 2, 2, 2});
+                    table.setWidths(new int[]{3, 3, 7, 4, 2, 2, 2});
                     table.addCell(getCell("OwnNumber", Element.ALIGN_LEFT, font7));
                     table.addCell(getCell("ExternalNumber", Element.ALIGN_LEFT, font7));
                     table.addCell(getCell("Description", Element.ALIGN_LEFT, font7));
@@ -226,7 +229,13 @@ public class ReportsZWD extends Window implements Button.ClickListener {
                         table.addCell(getCell( doc.getOwnNumber(), Element.ALIGN_LEFT, font7));
                         table.addCell(getCell( doc.getExternalNumber(), Element.ALIGN_LEFT, font7));
                         table.addCell(getCell( doc.getDescription(), Element.ALIGN_LEFT, font7));
-                        table.addCell(getCell( doc.getStatus(), Element.ALIGN_LEFT, font7));
+                        
+                        table.addCell(getCell( doc.getStatus().replace("SENDED_TO_SUPPLIER", "WYSŁANE DO DOSTAWCY")
+                                .replace("RECEIVED_BY_SUPPLIER", "OTRZYMANE PRZEZ DOSTAWCY") 
+                                .replace("OPEN", "OTWARTE") 
+                                .replace("ACCEPTED", "ZAAKCEPTOWANE")
+                                .replace("CONFIRMED_SUPPLIER", "POTWIERDZONE PRZEZ DOSTAWCE") 
+                                , Element.ALIGN_LEFT, font7)); 
                         
                         if ( doc.getClient() != null )
                           table.addCell(getCell( doc.getClient().getName(), Element.ALIGN_LEFT, font7));
@@ -239,7 +248,7 @@ public class ReportsZWD extends Window implements Button.ClickListener {
                           table.addCell("");
                         
                         if ( doc.getDateDelivery() != null )
-                          table.addCell(getCell( doc.getDateDelivery().toString() , Element.ALIGN_LEFT, font7));
+                          table.addCell(getCell( dt1.format(doc.getDateDelivery() ) , Element.ALIGN_LEFT, font7));
                         else 
                           table.addCell("");
                         
@@ -276,7 +285,7 @@ public class ReportsZWD extends Window implements Button.ClickListener {
         
              };   
                 
-        StreamResource resource = new StreamResource ( source,  "test.pdf" );
+        StreamResource resource = new StreamResource ( source,  "zamowieniaZWD.pdf" );
         return resource;
         
     }

@@ -5,13 +5,21 @@
  */
 package pl.vendi.ui.main;
 
+import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinService;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Layout;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import java.util.ArrayList;
+import javax.ws.rs.core.Cookie;
 import pl.vendi.ui.VOLookup;
 import pl.vendi.ui.VendiOrdersUI;
 import pl.vendi.ui.config.companys.WndCompanys;
@@ -34,6 +42,8 @@ import pl.vendi.ui.priceLists.WndPriceLists;
 import pl.vendi.ui.stock.WndStock;
 import pl.vo.VOConsts;
 import pl.vo.common.VoUserSession;
+import pl.vo.security.api.UsersApi;
+import pl.vo.security.model.User;
 
 /**
  *
@@ -75,6 +85,7 @@ public class UIMainWindow extends VerticalLayout {
     VoUserSession userSession;
 
     HorizontalLayout hboxTop = new HorizontalLayout();
+    VerticalLayout vboxCenter = new VerticalLayout();
     Button butLogout = new Button("Wyloguj");
 
     public UIMainWindow() {
@@ -161,14 +172,65 @@ public class UIMainWindow extends VerticalLayout {
         hboxTop.setWidth("100%");
 
         hboxTop.addComponent(butLogout);
+        
+        Image imgLogoUE = new Image();
+        imgLogoUE.setSource(new ThemeResource("dol.jpg"));
+        
+        Label labUE = new Label("Projekt współfinansowany ze środków Europejskiego Funduszu Rozwoju Regionalnego w ramach Programu Operacyjnego Innowacyjna Gospodarka");
+        Label labUEProjeName01 = new Label("Tytuł projektu: Stworzenie elektronicznej platformy B2B do obsługi procesów dostaw i zamówień w ramach działalności cateringowej prowadzonej przez spółkę Vendi Servis");
+        Label labUEProjeName02 = new Label("Numer Umowy o dofinasowanie:");
+        Label labUEProjeName03 = new Label("UDA-POIG.08.02.00--14-331/13-00");
+        vboxCenter.addComponent(labUE);
+        vboxCenter.addComponent(labUEProjeName01);
+        vboxCenter.addComponent(labUEProjeName02);
+        vboxCenter.addComponent(labUEProjeName03);
+        vboxCenter.addComponent(imgLogoUE);
+        this.addComponent(vboxCenter);
+        
         butLogout.addClickListener(new Button.ClickListener() {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 getUI().getSession().close();
                 getUI().getSession().getSession().invalidate();
-                VaadinService.getCurrentRequest().getWrappedSession().invalidate();
-                getUI().getPage().setLocation("/VOrders/app");
+                //VaadinService.getCurrentRequest().getWrappedSession().invalidate();
+                //getUI().getPage().setLocation("vendiservis.pl");
+                getUI().getPage().open("http://vendiservis.pl", "Vendi", true);
+                //getUI().getPage().
+//                javax.servlet.http.Cookie[] cookies = VaadinService.getCurrentRequest().getCookies();
+//                for (javax.servlet.http.Cookie cookie : cookies) {
+//                        cookie.setValue(null);              
+//                }
+//             
+//                VaadinSession.getCurrent().getSession();
+//                getSession().close();
+//                
+//                try {
+//                    VaadinSession.getCurrent().getLockInstance().lock();
+//                    //VaadinSession.getCurrent().setAttribute(SESSION_SCOPED_VALUE_ID, "some value");
+//                } finally {
+//                    VaadinSession.getCurrent().getLockInstance().unlock();
+//                }
+//                
+//                for (UI ui : getSession().getUIs()) {
+//                  Object previousSessionError = ui.getSession().getAttribute("logged_user");
+//                  ui.getSession().setAttribute("logged_user", null);
+//                  ui.getSession().lock();
+//                  ui.setSession(null);
+//                  userSession.setLoggedUser(null);
+//                  UsersApi usersApi =  VOLookup.lookupUsersApi();
+//                  User user = new User();
+//                  usersApi.setContextUser(user);
+//                  ui.isClosing();
+//                  ui.close();
+//                }
+                
+                //getUI().getPage().setLocation("/VOrders/app");
+                //getUI().getPage().setLocation("/");
+            
+               
+                
+      
             }
         });
 
