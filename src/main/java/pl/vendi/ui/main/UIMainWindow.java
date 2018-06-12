@@ -77,6 +77,8 @@ public class UIMainWindow extends VerticalLayout {
     
     private static String MENU_FINANCIAL_STOCK = "Stany finansowe";
     
+    private static String MENU_FINANCIAL_OFER = "Oferty";
+    
     // invoices
     private static String MENU_INVOICES = "Faktury";
 
@@ -157,6 +159,8 @@ public class UIMainWindow extends VerticalLayout {
         
         
         menu.addItem(MENU_FINANCIAL_STOCK, menuCommand);
+        
+        menu.addItem(MENU_FINANCIAL_OFER, menuCommand);
 
         this.addComponent(hboxTop);
         hboxTop.addComponent(menu);
