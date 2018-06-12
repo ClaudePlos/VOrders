@@ -108,7 +108,7 @@ public class ReportsZWD extends Window implements Button.ClickListener {
         List<ReportDTO> raports = new ArrayList<>();
     
         raports.add( new ReportDTO(1, "Wykaz zamówień") );
-        raports.add( new ReportDTO(2, "-") );
+        raports.add( new ReportDTO(2, "Podgląd stanów finansowych") );
         raports.add( new ReportDTO(3, "-") );
         
     

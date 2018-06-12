@@ -105,12 +105,26 @@ public FinancialStock() {
                 }
             }
         }
+        else if ( instanceCode.equals("BIELANY") )
+        {
+            companyZalogowane = loggedUser.getCompany();
+            
+            for ( Company c : listCompanies.getItemIds() )
+            {
+                if ( c.getNip().equals("5222899038") )
+                {
+                    listCompaniesView.addItem( c );
+                }
+            }
+        }
         
         
         cmbRok.addItem("2016");
         cmbRok.addItem("2017");
         cmbRok.addItem("2018");
         cmbRok.setValue("2017");
+        cmbRok.setValue("2018");
+        cmbRok.setValue("2019");
         hboxAdd.addComponent(cmbRok);
         
         

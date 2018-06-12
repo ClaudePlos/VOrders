@@ -182,7 +182,10 @@ public class DocumentsApi extends GenericDao<Document, Long> implements Serializ
             BigDecimal net = item.getUnitPriceNet().multiply(new BigDecimal(item.getAmount().intValue()));
             item.setValueNet(net);
             // 
-            BigDecimal tax = net.multiply(item.getProduct().getTaxRate()).setScale(2);
+            BigDecimal tax = new BigDecimal("23");
+            if ( item.getProduct().getTaxRate() != null )
+                 tax = net.multiply(item.getProduct().getTaxRate()).setScale(2);
+   
             tax = tax.divide(new BigDecimal(100),RoundingMode.HALF_UP).setScale(2);
             item.setValueTax(tax);
             item.setValueBrut(net.add(tax));
