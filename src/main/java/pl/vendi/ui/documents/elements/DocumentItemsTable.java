@@ -398,7 +398,7 @@ public class DocumentItemsTable extends Table {
                         int ilosc = generator.nextInt(1000);
                         Label labTowarDostepnosc = new Label();
                         
-                        if ( ilosc > 100 ){
+                        if ( ilosc > 0 ){
                            labTowarDostepnosc.setValue("Towar dostępny ilosc: " + (ilosc - 100) ); 
                            labTowarDostepnosc.setStyleName( ValoTheme.LABEL_SUCCESS ); 
                         } else {
