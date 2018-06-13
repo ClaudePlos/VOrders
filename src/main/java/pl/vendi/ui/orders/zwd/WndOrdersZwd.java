@@ -105,6 +105,6 @@ public class WndOrdersZwd extends Window
             }
         });
         
-        tabOrders.refresh();
+        //tabOrders.refresh();
     }
 }

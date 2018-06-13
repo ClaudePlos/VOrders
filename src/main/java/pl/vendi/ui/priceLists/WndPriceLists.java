@@ -77,6 +77,6 @@ public class WndPriceLists extends Window
         });
        
         
-        tabPriceLists.refresh();
+        //tabPriceLists.refresh();
     }
 }

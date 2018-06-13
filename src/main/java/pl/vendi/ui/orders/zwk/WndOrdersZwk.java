@@ -66,10 +66,8 @@ public class WndOrdersZwk extends Window
               wnd.newDocument( VOConsts.DOC_TYPE_ZWK );
             }
         });
+             
         
-       
-       
-        
-        tabOrders.refresh();
+        //tabOrders.refresh();
     }
 }

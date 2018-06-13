@@ -88,6 +88,6 @@ public class WndDpzs extends Window
         });
        
         
-        tabOrders.refresh();
+        //tabOrders.refresh();
     }
 }
