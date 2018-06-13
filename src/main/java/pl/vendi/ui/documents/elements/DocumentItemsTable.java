@@ -395,7 +395,7 @@ public class DocumentItemsTable extends Table {
                         String companyUnitAddress = "";
                         String url = "https://www.google.pl/maps/dir/Ożarów+Mazowiecki/Wyszków/";
                         
-                        int ilosc = generator.nextInt(1000);
+                        int ilosc = generator.nextInt(50)+950;
                         Label labTowarDostepnosc = new Label();
                         
                         if ( ilosc > 0 ){
