@@ -183,6 +183,15 @@ public class DocumentsApi extends GenericDao<Document, Long> implements Serializ
             item.setValueNet(net);
             // 
             BigDecimal tax = new BigDecimal("23");
+            
+            if (item.getUnitPriceNet() == null) {
+                throw new VOWrongDataException("Błąd w dokumencie -towar:" + item.getProduct().getAbbr() + " nie ma cemy");
+            }
+            
+            if (item.getProduct()== null){
+                throw new VOWrongDataException("Błąd w dokumencie - produkt się nie zaczytal. Zobacz czy w vo_product_codes jest product_id i code dla produktu");
+            }
+            
             if ( item.getProduct().getTaxRate() != null )
                  tax = net.multiply(item.getProduct().getTaxRate()).setScale(2);
    

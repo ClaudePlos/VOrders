@@ -304,7 +304,8 @@ public class EdifactOrderImport implements Serializable {
                     Product prod = productsApi.getByIndex(SupplierProductId);
                     docItem.setProduct(prod);
                 } catch (VoNoResultException nre) {
-                    throw new VOWrongDataException("Nie udało się przetworzyć zamóienia - nieznany towar o indeksie:" + SupplierProductId);
+                    throw new VOWrongDataException("Nie udało się przetworzyć zamóienia - nieznany towar o indeksie:" + SupplierProductId
+                    + " sprawdz hasla");
                 }
             }
             if (prodId.getItemNumberIdentification1().getItemNumberTypeCoded().equals("BP")) {

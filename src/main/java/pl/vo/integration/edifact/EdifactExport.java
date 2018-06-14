@@ -307,8 +307,11 @@ public class EdifactExport {
         
         
         try {
-             String supplier_code = null;
+            String supplier_code = null;
             supplier_code = item.getProduct().getCodeForSupplier(document.getSupplier().getId());
+            if (supplier_code == null ){
+                supplier_code = item.getExternalItemId();
+            }
             prodCode.setItemNumberIdentification1(new ItemNumberIdentificationC212());
             prodCode.getItemNumberIdentification1().setItemNumber(supplier_code);
             prodCode.getItemNumberIdentification1().setItemNumberTypeCoded("SA");
@@ -316,6 +319,11 @@ public class EdifactExport {
             ret.add(prodCode);
         } catch (VoNoResultException nre) {
 //            throw new VOWrongDataException("Błąd eksportu:" + nre.getMessage(), nre);
+            prodCode.setItemNumberIdentification1(new ItemNumberIdentificationC212());
+            prodCode.getItemNumberIdentification1().setItemNumber(item.getProduct().getExternalCode());
+            prodCode.getItemNumberIdentification1().setItemNumberTypeCoded("SA");
+            prodCode.setProductIdFunctionQualifier("5");
+            ret.add(prodCode);
         }
 
         return ret;

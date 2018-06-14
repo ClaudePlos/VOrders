@@ -60,6 +60,7 @@ public class User extends AuditEntityBase implements Serializable, IVoAuditable 
     private String type;
     
     @Size(max=100)
+    @Column(name="remotetoken")
     private String remoteToken ; 
 
     @Column(name="login_token")
