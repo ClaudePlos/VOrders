@@ -96,7 +96,7 @@ public class ProductsApi extends GenericDao<Product, Long>  implements Serializa
             Product ret = (Product) em.createQuery(cq).getSingleResult();
             return ret;
         } catch (NoResultException nre) {
-            throw new VoNoResultException("Nie znaleziono towaru o indexNumber:" + indexNumber);
+            throw new VoNoResultException("Nie znaleziono towaru tab.Product o indexNumber:" + indexNumber);
         }
         catch( NonUniqueResultException nue)
         {
@@ -131,7 +131,7 @@ public class ProductsApi extends GenericDao<Product, Long>  implements Serializa
 //            Product ret = (Product) em.createQuery(cq).getSingleResult();
             return ret.getProduct();
         } catch (NoResultException nre) {
-            throw new VoNoResultException("Nie znaleziono towaru o indexNumber:" + indexNumber);
+            throw new VoNoResultException("Nie znaleziono towaru tab. ProductCmpCode o indexNumber:" + indexNumber);
         }
 
     }
@@ -148,7 +148,7 @@ public class ProductsApi extends GenericDao<Product, Long>  implements Serializa
             Product ret = (Product) em.createQuery(cq).getSingleResult();
             return ret;
         } catch (NoResultException nre) {
-            throw new VoNoResultException("Nie znaleziono towaru o indexNumber:" + nameProduct);
+            throw new VoNoResultException("Nie znaleziono towaru o NAME w tabeli:" + nameProduct);
         }
 
     }
