@@ -131,7 +131,7 @@ public class ProductsApi extends GenericDao<Product, Long>  implements Serializa
 //            Product ret = (Product) em.createQuery(cq).getSingleResult();
             return ret.getProduct();
         } catch (NoResultException nre) {
-            throw new VoNoResultException("Nie znaleziono towaru tab. ProductCmpCode o indexNumber:" + indexNumber);
+            throw new VoNoResultException("Nie znaleziono towaru tab. ProductCmpCode o indexNumber:" + indexNumber + "Sprawdz Towary>Kod towarów u dostawców");
         }
 
     }
